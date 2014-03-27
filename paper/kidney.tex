@@ -4,7 +4,7 @@
 
 \begin{frontmatter}
 
-\title{Regression and classification for renal cell carcinomas}
+\title{Classification and Prediction for Renal Cell Carcinomas}
 \runtitle{Renal cell carcinomas classification}
 
 \begin{aug}
@@ -21,35 +21,31 @@
 
 \begin{abstract}
 
-Compare two different cancer cells
-(e.g.,  Kidney renal papillary cell carcinoma and Kidney renal clear
-cell carcinoma).
+In this project, we will compare classification methods for deciphering between 
+two different cancer cells. Specifically, we will be looking at Kidney renal 
+papillary cell carcinoma (KIRP) and Kidney renal clear cell carcinoma (KIRC) 
+from the Cancer Genome Atlas.\footnote{\url{https://tcga-data.nci.nih.gov/tcga/}}
 
-filter low counts
+After downloading the raw RNAseq count data from the website, we will perform 
+exploratory data analysis, looking at the need for normalization, low count 
+filtering, batch effects, and outlier removal.
 
-training/validation sets (2/3 vs. 1/3)
+Moving forward, we will split the data into training (2/3) and validation sets
+(1/3) for each cancer cell type. Then, using the training sets we will rank the
+genes in terms of differential expression between cell types using a naive
+t-test. These ranks will be used for feature selection (top 10, 20, 30, 40 genes)
+to compare classification performance based on different numbers of features.
 
-EDA
+Finally, we will perform several classification methods per feature set
+(training our methods on the training data sets and testing our methods on the 
+validation data sets):
+\begin{itemize}
+\item K-Nearest Neighbors
+\item Linear Discriminant Analysis
+\item Support Vector Machines
+\end{itemize}
+Additionally, we will compare these methods to the Random Forest classifier.
 
-feature selection
-
- - LASSO
-
- - naive ttest (10, 20, 30, vs. 40) --- compare effects of number of features
-
-classification
-
- - knn
-
- - svm
-
- - random forest
-
- - LDA
-
-prediction
-
- - test performance with validation set
  
 \end{abstract}
 
