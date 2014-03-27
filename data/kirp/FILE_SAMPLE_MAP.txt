@@ -1,0 +1,14 @@
+filename	barcode(s)
+unc.edu.0057e13d-5489-4c48-9772-9fd45db4d84f.1040661.junction_quantification.txt	TCGA-BQ-7045-01A-31R-1965-07
+unc.edu.0057e13d-5489-4c48-9772-9fd45db4d84f.1041374.rsem.genes.results	TCGA-BQ-7045-01A-31R-1965-07
+unc.edu.0057e13d-5489-4c48-9772-9fd45db4d84f.1041375.rsem.isoforms.results	TCGA-BQ-7045-01A-31R-1965-07
+unc.edu.0057e13d-5489-4c48-9772-9fd45db4d84f.1041387.rsem.genes.normalized_results	TCGA-BQ-7045-01A-31R-1965-07
+unc.edu.0057e13d-5489-4c48-9772-9fd45db4d84f.1041392.rsem.isoforms.normalized_results	TCGA-BQ-7045-01A-31R-1965-07
+unc.edu.0057e13d-5489-4c48-9772-9fd45db4d84f.1758690.bt.exon_quantification.txt	TCGA-BQ-7045-01A-31R-1965-07
+unc.edu.00b33fcb-61eb-4dba-991c-e9b2a9a70a51.1383011.junction_quantification.txt	TCGA-BQ-7045-11A-01R-1965-07
+unc.edu.00b33fcb-61eb-4dba-991c-e9b2a9a70a51.1386687.rsem.genes.results	TCGA-BQ-7045-11A-01R-1965-07
+unc.edu.00b33fcb-61eb-4dba-991c-e9b2a9a70a51.1386688.rsem.isoforms.results	TCGA-BQ-7045-11A-01R-1965-07
+unc.edu.00b33fcb-61eb-4dba-991c-e9b2a9a70a51.1386708.rsem.isoforms.normalized_results	TCGA-BQ-7045-11A-01R-1965-07
+unc.edu.00b33fcb-61eb-4dba-991c-e9b2a9a70a51.1386711.rsem.genes.normalized_results	TCGA-BQ-7045-11A-01R-1965-07
+unc.edu.00b33fcb-61eb-4dba-991c-e9b2a9a70a51.1758709.bt.exon_quantification.txt	TCGA-BQ-7045-11A-01R-1965-07
+

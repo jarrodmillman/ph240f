@@ -1,0 +1,9 @@
+Platform Type	Center	Platform	Level	Sample	Barcode	File Name
+METADATA	UNC	IlluminaHiSeq_RNASeqV2	n/a	selected_samples	N/A	unc.edu_KIRC.IlluminaHiSeq_RNASeqV2.1.5.0.idf.txt
+METADATA	UNC	IlluminaHiSeq_RNASeqV2	n/a	selected_samples	N/A	unc.edu_KIRC.IlluminaHiSeq_RNASeqV2.1.5.0.sdrf.txt
+RNASeqV2	UNC	IlluminaHiSeq_RNASeqV2	3	TCGA-BP-4342-01	TCGA-BP-4342-01A-01R-1289-07	unc.edu.005a0c90-a762-4df7-8b44-b4facd06e9b1.1229620.junction_quantification.txt
+RNASeqV2	UNC	IlluminaHiSeq_RNASeqV2	3	TCGA-BP-4342-01	TCGA-BP-4342-01A-01R-1289-07	unc.edu.005a0c90-a762-4df7-8b44-b4facd06e9b1.1230034.rsem.genes.results
+RNASeqV2	UNC	IlluminaHiSeq_RNASeqV2	3	TCGA-BP-4342-01	TCGA-BP-4342-01A-01R-1289-07	unc.edu.005a0c90-a762-4df7-8b44-b4facd06e9b1.1230035.rsem.isoforms.results
+RNASeqV2	UNC	IlluminaHiSeq_RNASeqV2	3	TCGA-BP-4342-01	TCGA-BP-4342-01A-01R-1289-07	unc.edu.005a0c90-a762-4df7-8b44-b4facd06e9b1.1230067.rsem.genes.normalized_results
+RNASeqV2	UNC	IlluminaHiSeq_RNASeqV2	3	TCGA-BP-4342-01	TCGA-BP-4342-01A-01R-1289-07	unc.edu.005a0c90-a762-4df7-8b44-b4facd06e9b1.1230070.rsem.isoforms.normalized_results
+RNASeqV2	UNC	IlluminaHiSeq_RNASeqV2	3	TCGA-BP-4342-01	TCGA-BP-4342-01A-01R-1289-07	unc.edu.005a0c90-a762-4df7-8b44-b4facd06e9b1.1768104.bt.exon_quantification.txt
