@@ -32,6 +32,7 @@ _build
 
 # Data files
 .RData
+Rplots.pdf
 
 # Example code in package build process
 *-Ex.R
