@@ -1,5 +1,37 @@
+# Built objects
+kidney.pdf
+_build
+
+# LaTeX projects
+*.aux
+*.glo
+*.idx
+*.log
+*.toc
+*.ist
+*.acn
+*.acr
+*.alg
+*.bbl
+*.blg
+*.dvi
+*.glg
+*.gls
+*.ilg
+*.ind
+*.lof
+*.lot
+*.maf
+*.mtc
+*.mtc1
+*.out
+*.synctex.gz
+
 # History files
 .Rhistory
+
+# Data files
+.RData
 
 # Example code in package build process
 *-Ex.R
