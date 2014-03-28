@@ -8,12 +8,12 @@
 \runtitle{Renal cell carcinomas classification}
 
 \begin{aug}
-\author{\fnms{Alex} \snm{Anderson},\thanksref{t2}\ead[label=e1]{aga@berkeley.edu}}
-\author{\fnms{K. Jarrod} \snm{Millman},\thanksref{t1}\ead[label=e2]{millman@berkeley.edu}}
+\author{\fnms{Alex} \snm{Anderson},\thanksref{t1}\ead[label=e1]{aga@berkeley.edu}}
+\author{\fnms{K. Jarrod} \snm{Millman},\thanksref{t2}\ead[label=e2]{millman@berkeley.edu}}
 \and
-\author{\fnms{Lara} \snm{Troszak}\thanksref{t1}\ead[label=e2]{troszak1@berkeley.edu}}
-\thankstext{t1}{Division of Biostatistics, School of Public Health, UC Berkeley}
-\thankstext{t2}{Department of Physics, UC Berkeley}
+\author{\fnms{Lara} \snm{Troszak}\thanksref{t2}\ead[label=e3]{troszak1@berkeley.edu}}
+\thankstext{t1}{Department of Physics, UC Berkeley}
+\thankstext{t2}{Division of Biostatistics, School of Public Health, UC Berkeley}
 \runauthor{Anderson, Millman, and Troszak}
 \end{aug}
 
@@ -21,41 +21,42 @@
 
 \begin{abstract}
 
-In this project, we will compare classification methods for deciphering between 
-two different cancer cells. Specifically, we will be looking at Kidney renal 
-papillary cell carcinoma (KIRP) and Kidney renal clear cell carcinoma (KIRC) 
-from the Cancer Genome Atlas.\footnote{\url{https://tcga-data.nci.nih.gov/tcga/}}
+In this project, we will compare classification methods for deciphering between
+two different cancer cells. Specifically, we will be looking at Kidney renal
+papillary cell carcinoma (KIRP) and Kidney renal clear cell carcinoma (KIRC)
+from the Cancer Genome
+Atlas.\footnote{\url{https://tcga-data.nci.nih.gov/tcga/}}
 
-After downloading the raw RNAseq count data from the website, we will perform 
-exploratory data analysis, looking at the need for normalization, low count 
+After downloading the raw RNAseq count data from the website, we will perform
+exploratory data analysis, looking at the need for normalization, low count
 filtering, batch effects, and outlier removal.
 
 Moving forward, we will split the data into training (2/3) and validation sets
 (1/3) for each cancer cell type. Then, using the training sets we will rank the
 genes in terms of differential expression between cell types using a naive
-t-test. These ranks will be used for feature selection (top 10, 20, 30, 40 genes)
-to compare classification performance based on different numbers of features.
+t-test. These ranks will be used for feature selection (top 10, 20, 30, 40
+genes) to compare classification performance based on different numbers of
+features.
 
 Finally, we will perform several classification methods per feature set
-(training our methods on the training data sets and testing our methods on the 
-validation data sets):
-\begin{itemize}
-\item K-Nearest Neighbors
-\item Linear Discriminant Analysis
-\item Support Vector Machines
-\end{itemize}
-Additionally, we will compare these methods to the Random Forest classifier.
+(training our methods on the training data sets and testing our methods on the
+validation data sets): K-Nearest Neighbors, Linear Discriminant Analysis, and
+Support Vector Machines.  Additionally, we will compare these methods to the
+Random Forest classifier.
 
  
 \end{abstract}
 
 \begin{keyword}
-\kwd{Kidney Cancer}
 \kwd{Renal Cell Carcinomas}
 \kwd{Classification}
 \kwd{Prediction}
 \end{keyword}
 
 \end{frontmatter}
+
+\section*{Acknowledgments}
+We would like to thank Davide Risso for pointing us to the Cancer Genome
+Atlas as well as providing feedback on proposal.
 
 \end{document}
