@@ -1,7 +1,5 @@
 \input{../_style/kidney.sty}
 
-\usepackage{fullpage}
-
 \begin{document}
 
 \begin{frontmatter}
@@ -29,9 +27,9 @@ papillary cell carcinoma (KIRP) and Kidney renal clear cell carcinoma (KIRC)
 from the Cancer Genome
 Atlas.\footnote{\url{https://tcga-data.nci.nih.gov/tcga/}}
 
-After downloading the raw RNAseq count data from the website, we will perform
-exploratory data analysis, looking at the need for normalization, low count
-filtering, batch effects, and outlier removal.
+Using the raw RNAseq count data from the website, we will perform exploratory
+data analysis, looking at the need for normalization, low count filtering,
+batch effects, and outlier removal.
 
 Moving forward, we will split the data into training (2/3) and validation sets
 (1/3) for each cancer cell type. Then, using the training sets we will rank the
@@ -57,22 +55,38 @@ Random Forest classifier.
 
 \end{frontmatter}
 
-\section*{Acknowledgments}
-We would like to thank Davide Risso for pointing us to the Cancer Genome
-Atlas as well as providing feedback on our proposal.
 
 
 \section{Possible Extensions}
 
-Depending on the amount of time that we have after we finish our core proposal, we may pursue some of the following refinements of our analysis:
+Depending on the amount of time that we have after we finish our core proposal,
+we may pursue some of the following refinements of our analysis:
 
 \begin{enumerate}
-\item There are many different methods to normalize our data. We could try these normalizations and see how they impact the final results of our classifier. 
-\item The training and validation sets could be chosen differently (eg. using a different split or some method like leave one out cross validation). 
-\item There are many potential ways to choose features to supply to our list of classification algorithms. 
-\item In our current design, we use between sample normalization for a test set that is one-third of our total sample size. Ideally, we would be able to train a classifier and feed it just one new RNAseq data set and assess the existence of cancer. 
-\item It would be helpful for our classifier to have the following three outputs: no cancer, KIRP, KIRC. This would require the collection and formatting of additional data from healthy kidney cells. 
+
+\item There are many different methods to normalize our data. We could try
+these normalizations and see how they impact the final results of our
+classifier. 
+
+\item The training and validation sets could be chosen differently (eg. using a
+different split or some method like leave one out cross validation). 
+
+\item There are many potential ways to choose features to supply to our list of
+classification algorithms. 
+
+\item In our current design, we use between sample normalization for a test set
+that is one-third of our total sample size. Ideally, we would be able to train
+a classifier and feed it just one new RNAseq data set and assess the existence
+of cancer. 
+
+\item It would be helpful for our classifier to have the following three
+outputs: no cancer, KIRP, KIRC. This would require the collection and
+formatting of additional data from healthy kidney cells. 
 
 \end{enumerate}
+
+\section*{Acknowledgments}
+We would like to thank Davide Risso for pointing us to the Cancer Genome
+Atlas as well as providing feedback on our proposal.
 
 \end{document}
