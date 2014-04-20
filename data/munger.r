@@ -1,5 +1,5 @@
 require("Biobase")
-
+require("EDASeq")
 a.all <- read.csv('kirc.csv', row.names=1)
 b.all <- read.csv('kirp.csv', row.names=1)
 set.seed(1)
@@ -17,6 +17,10 @@ pData <- data.frame(
 )
 
 phenoData <- new("AnnotatedDataFrame", data = pData)
-eset <- ExpressionSet(assayData=as.matrix(log(c+1)), phenoData=phenoData)
+#eset <- ExpressionSet(assayData=as.matrix(log(c+1)), phenoData=phenoData)
+
+#put data in a SeqExpressionSet
+eset=newSeqExpressionSet(exprs=as.matrix(log(c+1)), phenoData=phenoData)
+
 save(file='eset.rda', eset)
 #boxplot(log(a+1), xlab='Subjects (n=73)', ylab="log(E(gene counts)+1)")
