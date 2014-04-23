@@ -20,7 +20,7 @@ phenoData <- new("AnnotatedDataFrame", data = pData)
 #eset <- ExpressionSet(assayData=as.matrix(log(c+1)), phenoData=phenoData)
 
 #put data in a SeqExpressionSet
-eset=newSeqExpressionSet(exprs=as.matrix(log(c+1)), phenoData=phenoData)
-
+#eset=newSeqExpressionSet(exprs=as.matrix(log(c+1)), phenoData=phenoData)
+eset=newSeqExpressionSet(exprs=as.matrix(c), phenoData=phenoData)
 save(file='eset.rda', eset)
 #boxplot(log(a+1), xlab='Subjects (n=73)', ylab="log(E(gene counts)+1)")
