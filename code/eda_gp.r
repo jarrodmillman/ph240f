@@ -1,6 +1,8 @@
 ####Group_Project####
 setwd("/Users/lktroszak/src/ph240f/data")
 load("eset.rda")
+require("Biobase")
+require("EDASeq")
 #Check to make sure everything is as it should be
 sum(eset$type=="KIRC")
 sum(eset$type=="KIRP")
@@ -53,25 +55,25 @@ MDPlot(norm_eset,c(12,70),main="bw")
 hist(log(exprs(norm_eset)+1))
 #### Attempt to figure out genes which have the most variance ####
 #Take genes with top 500 variances (do we want to do this in just the training set?)
-KIRC.genes=names(sort(rowVars(exprs(lognorm_eset[norm_eset$type=="KIRC"])),decreasing=T))[1:500]
-KIRP.genes=names(sort(rowVars(exprs(lognorm_eset[norm_eset$type=="KIRP"])),decreasing=T))[1:500]
-top.genes=names(sort(rowVars(exprs(lognorm_eset)),decreasing=T))[1:500]
+kirc.genes=names(sort(rowVars(lognorm_eset[,norm_eset$type=="KIRC"]),decreasing=T))[1:500]
+kirp.genes=names(sort(rowVars(lognorm_eset[,norm_eset$type=="KIRP"]),decreasing=T))[1:500]
+top.genes=names(sort(rowVars(lognorm_eset),decreasing=T))[1:500]
 
 
-KIRC.var=(rowVars(lognorm_eset[,norm_eset$type=="KIRC"]))
-KIRP.var=(rowVars(lognorm_eset[,norm_eset$type=="KIRP"]))
-KIRC.mean=(rowMeans(lognorm_eset[,norm_eset$type=="KIRC"]))
-KIRP.mean=(rowMeans(lognorm_eset[,norm_eset$type=="KIRP"]))
-KIRC.n=sum(norm_eset$type=="KIRC")
-KIRP.n=sum(norm_eset$type=="KIRP")
+kirc.var=(rowVars(lognorm_eset[,norm_eset$type=="KIRC"]))
+kirp.var=(rowVars(lognorm_eset[,norm_eset$type=="KIRP"]))
+kirc.mean=(rowMeans(lognorm_eset[,norm_eset$type=="KIRC"]))
+kirp.mean=(rowMeans(lognorm_eset[,norm_eset$type=="KIRP"]))
+kirc.n=sum(norm_eset$type=="KIRC")
+kirp.n=sum(norm_eset$type=="KIRP")
 #### t-tests for difference of mean expression ####
 #Using wiki t-test for unequal sample sizes/variances
 #work in progress
-se=sqrt(((KIRC.var^2)/KIRC.n)+((KIRP.var^2)/KIRP.n))
-t=(KIRC.mean-KIRP.mean)/se
+se=sqrt(((kirc.var^2)/kirc.n)+((kirp.var^2)/kirp.n))
+t=(kirc.mean-kirp.mean)/se
 
-denomt1=(((KIRC.var^2)/(KIRC.n))^2)/(KIRC.n-1)
-denomt2=(((KIRP.var^2)/(KIRP.n))^2)/(KIRP.n-1)
+denomt1=(((kirc.var^2)/(kirc.n))^2)/(kirc.n-1)
+denomt2=(((kirp.var^2)/(kirp.n))^2)/(kirp.n-1)
 df=(se^4)/(denomt1+denomt2)
 pvals=2*pt(-abs(t),df)
 
