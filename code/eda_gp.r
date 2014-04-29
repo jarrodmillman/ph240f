@@ -52,6 +52,7 @@ MDPlot(norm_eset,c(48,60),main="within")
 MDPlot(norm_eset,c(12,50),main="bw")
 MDPlot(norm_eset,c(12,70),main="bw")
 
+par(mfrow=c(1,1))
 hist(log(exprs(norm_eset)+1))
 #### Attempt to figure out genes which have the most variance ####
 #Take genes with top 500 variances (do we want to do this in just the training set?)
@@ -76,6 +77,25 @@ denomt1=(((kirc.var^2)/(kirc.n))^2)/(kirc.n-1)
 denomt2=(((kirp.var^2)/(kirp.n))^2)/(kirp.n-1)
 df=(se^4)/(denomt1+denomt2)
 pvals=2*pt(-abs(t),df)
+par(mfrow=c(1,2))
+hist(pvals,main="Gene P-Values")
+hist(log(pvals),main="Gene Log P-Values")
+
+top.pvals=(log(pvals)<=-80)
+pval.ind=which(log(pvals)<=-80)
+filt.lognorm_eset=lognorm_eset[top.pvals,]
+
+fit=princomp(t(filt.lognorm_eset),cor=T)
+
+loadings(fit)
+par(mfrow=c(1,1))
+plot(fit)
+score1=fit$scores[,1]
+score2=fit$scores[,2]
+plot(score1,score2,col=ifelse((norm_eset$type=="KIRC"),"red","blue"),main="PC1 vs. PC2, Colored by Cancer")
+legend("bottomleft",c("KIRC","KIRP"),text.col=c("red","blue"),cex=.8)
+
+fit$loadings[,1]
 
 #### KNN Classification ####
 require("class")
