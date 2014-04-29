@@ -81,6 +81,13 @@ par(mfrow=c(1,2))
 hist(pvals,main="Gene P-Values")
 hist(log(pvals),main="Gene Log P-Values")
 
+##### P-values using FDR ####
+fdr.pvals=p.adjust(pvals,method="fdr")
+par(mfrow=c(1,2))
+hist(log(pvals),main="Log Regular P")
+hist(log(fdr.pvals),main="Log FDR P")
+
+
 top.pvals=(log(pvals)<=-80)
 pval.ind=which(log(pvals)<=-80)
 filt.lognorm_eset=lognorm_eset[top.pvals,]
@@ -104,6 +111,7 @@ require("class")
 #### Support Vector Machines Classification ####
 require("e1071")
 #use functions svm, predict.svm
+SVM=svm(norm_eset$type~fit$scores,cross=10)
 
 #### Random Forest Classification ####
 require("randomForest")
