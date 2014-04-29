@@ -29,6 +29,7 @@ _build
 
 # History files
 .Rhistory
+*.history
 
 # Data files
 .RData
