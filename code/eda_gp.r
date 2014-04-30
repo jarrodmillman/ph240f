@@ -121,6 +121,10 @@ table(pred=svm.pred,true=testy)
 
 #### Random Forest Classification ####
 require("randomForest")
+#I tried throwing all the genes into random forest but it was taking a very long time
+#trainx=t(lognorm_eset[,which(eset$train)])
+#testx=t(lognorm_eset[,which(!eset$train)])
+
 #use function randomForest
 rf.fit=randomForest(trainy~.,data=trainx,proximity=T,importance=T)
 rf.pred=predict(rf.fit,testx)
