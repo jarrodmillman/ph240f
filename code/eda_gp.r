@@ -111,8 +111,24 @@ require("class")
 #### Support Vector Machines Classification ####
 require("e1071")
 #use functions svm, predict.svm
-SVM=svm(norm_eset$type~fit$scores,cross=10)
+trainy=norm_eset$type[which(eset$train)]
+testy=norm_eset$type[which(!eset$train)]
+trainx=fit$scores[which(eset$train),]
+testx=fit$scores[which(!eset$train),]
+SVM=svm(trainy~.,data=trainx)
+svm.pred=predict(SVM,testx)
+table(pred=svm.pred,true=testy)
 
 #### Random Forest Classification ####
 require("randomForest")
 #use function randomForest
+rf.fit=randomForest(trainy~.,data=trainx,proximity=T,importance=T)
+rf.pred=predict(rf.fit,testx)
+table(pred=rf.pred,true=testy)
+
+#### SuperLearner ####
+#require('SuperLearner')
+#SL.library=c('SL.randomForest','SL.svm','SL.knn')
+#trainyy=1*trainy
+#SL=SuperLearner(Y=as.numeric(trainy)-1,X=data.frame(trainx),newX=data.frame(testx),SL.library=SL.library,family=binomial())
+#SL$SL.predict
