@@ -1,0 +1,99 @@
+\input{../_style/kidney.sty}
+
+\begin{document}
+
+\begin{frontmatter}
+
+\title{Classification for Renal Cell Carcinomas}
+\runtitle{Renal cell carcinomas classification}
+
+\begin{aug}
+\author{\fnms{Alex} \snm{Anderson},\thanksref{t1}\ead[label=e1]{aga@berkeley.edu}}
+\author{\fnms{K. Jarrod} \snm{Millman},\thanksref{t2}\ead[label=e2]{millman@berkeley.edu}}
+\and
+\author{\fnms{Lara} \snm{Troszak}\thanksref{t2}\ead[label=e3]{troszak1@berkeley.edu}}
+\thankstext{t1}{Department of Physics, UC Berkeley}
+\thankstext{t2}{Division of Biostatistics, School of Public Health, UC Berkeley}
+\runauthor{Anderson, Millman, and Troszak}
+\end{aug}
+
+
+
+\begin{abstract}
+
+In this project, we will compare classification methods for discriminating between
+two different cancer cells. Specifically, we will be looking at Kidney renal
+papillary cell carcinoma (KIRP) and Kidney renal clear cell carcinoma (KIRC)
+from the Cancer Genome Atlas.\footnote{\url{https://tcga-data.nci.nih.gov/tcga/}}
+
+Using the unnormalized RNAseq count data from this website, we will perform exploratory
+data analysis, looking at the need for normalization, low count filtering,
+batch effects, and outlier removal.
+
+Moving forward, we will utilize k-fold cross validation to assess
+our classification methods. Using the training sets we will rank the
+genes in terms of differential expression between cell types based on their p-values.
+These ranks will be used for feature selection, comparing classification performance
+based on different numbers of features (selection of the top 10, 20, 30, and 40 
+genes as features).
+
+Finally, we will perform several classification methods per feature set
+(training our methods on the training data sets and testing our methods on the
+validation data sets): K-Nearest Neighbors, Linear Discriminant Analysis, and
+Support Vector Machines.  Additionally, we will compare these methods to the
+Random Forest classifier.
+
+ 
+\end{abstract}
+
+\begin{keyword}
+\kwd{Renal Cell Carcinomas}
+\kwd{Classification}
+\kwd{Prediction}
+\end{keyword}
+
+\end{frontmatter}
+
+
+
+\section{Introduction}
+
+Depending on the amount of time that we have after we finish our core proposal,
+we may pursue some of the following refinements of our analysis:
+
+\begin{enumerate}
+
+\item There are many different methods to normalize our data. We could try
+these normalizations and see how they impact the final results of our
+classifier. 
+
+\item There are many potential ways to choose features to supply to our list of
+classification algorithms. 
+
+\item In our current design, we use between sample normalization for a test set
+that is one-third of our total sample size. Ideally, we would be able to train
+a classifier and feed it just one new RNAseq data set and assess the existence
+of cancer. 
+
+\item It would be helpful for our classifier to have the following three
+outputs: no cancer, KIRP, KIRC. This would require the collection and
+formatting of additional data from healthy kidney cells. 
+
+\end{enumerate}
+
+\section{Methods}
+
+\section{Data}
+
+\section{Results}
+
+\section{Discussion}
+
+\section{References}
+
+
+\section*{Acknowledgments}
+We would like to thank Davide Risso for pointing us to the Cancer Genome
+Atlas as well as providing feedback on our proposal.
+
+\end{document}
