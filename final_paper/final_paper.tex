@@ -1,4 +1,4 @@
-\input{../_style/kidney.sty}
+\input{../_style/final_paper.sty}
 
 \begin{document}
 
@@ -57,43 +57,74 @@ Random Forest classifier.
 
 
 \section{Introduction}
+High throughput sequencing technology has revolutionized our ability to understand how cells function, or in the case of cancer, malfunction. In this study, we analyze RNAseq data from two types of renal cell carcinomas. 
 
-Depending on the amount of time that we have after we finish our core proposal,
-we may pursue some of the following refinements of our analysis:
-
-\begin{enumerate}
-
-\item There are many different methods to normalize our data. We could try
-these normalizations and see how they impact the final results of our
-classifier. 
-
-\item There are many potential ways to choose features to supply to our list of
-classification algorithms. 
-
-\item In our current design, we use between sample normalization for a test set
-that is one-third of our total sample size. Ideally, we would be able to train
-a classifier and feed it just one new RNAseq data set and assess the existence
-of cancer. 
-
-\item It would be helpful for our classifier to have the following three
-outputs: no cancer, KIRP, KIRC. This would require the collection and
-formatting of additional data from healthy kidney cells. 
-
-\end{enumerate}
 
 \section{Methods}
+\subsection{Classification Pipeline}
+Starting from gene expression levels using the RSEM algorithm, we carried out the following steps to analyze our data:
+\begin{enumerate}
+\item Split the data into training and test sets. 
+\item Filter out genes with low average read counts for both cancer types in the training set. 
+\item Upper quantile normalization of the log counts in the training set, and store the value that the 3rd quantile get set to. 
+\item Feature Selection (i.e. genes) using unequal sample size, unequal variance two-sided t-tests. 
+\item Use the FDR method for adjusting p-values to correct for multiple comparisions. (NOT SURE WHAT R DOES HERE... IT CHANGES THE P-VALUES)
+\item Train a classifier on the training data
+\item Filter and normalize the test data using the values from the second and third steps. 
+\end{enumerate}
+
+
+% Figure: histogram of gene expression after filtering. Looks reasonably normal. 
+% Figure: box-plots of the normalized data
+% Figure: mean difference plots after normalization
+% Figure: mean difference plots after feature selection
+
+Comments:
+
+The t-test that we employed to do feature selection, also known as Welch's t-test, used the following formulae:
+\begin{gather}
+t = \frac{\overline{X}_1-\overline{X}_2}{s_{\overline{X}_1-\overline{X}_2}} \\
+s_{\overline{X}_1-\overline{X}_2} = \sqrt{\frac{s_1^2}{n_1}+\frac{s_2^2}{n_2}} \\
+\text{d.f.} = \frac{\left(\frac{s_1^2}{n_1}+\frac{s_2^2}{n_2} \right)}{\frac{s_1^4}{n_1^2(n_1-1)} + \frac{s_2^4}{n_2^2(n_2-1)}}
+\end{gather}
+
+\subsection{Classification Methods}
+We investigated applied a number of methods in order to classify our data:
+
+\begin{enumerate}
+\item Principal Components Analysis - Choose the genes with the top X pvalues. 
+\item Support Vector Machines
+\item Linear Discriminant Analysis (with two clusters)
+\item Random Forests
+\end{enumerate}
+
+
+\subsection{Performance Metrics}
+
+Give our classification methods, we will consider a number of performance metrics. We will look at accuracy (total correct over all predictions). Next, for classifiers that give probabilities, we will plot the number of correct predictions as a function of the number of false predictions for various thresholds. Eg. if $p>t=0.1$, we say that we cannot decide which cancer type that patient is. 
 
 \section{Data}
+The Cancer Genome Atlas (TCGA) collects and analyzes high-quality tumor samples and makes a variety of data available online. We have downloaded RNA seq data for two types of cancer, KIRC and KIRP. The data was collected by the David Neil Hayes group at UNC Chapel Hill. The data was produced using Illumina HiSeq 2000 sequencers. 
+
+Counts per genes (GAF TCGA hg19 June 2011 build) calculated using the SeqWare framework via the RSEM algorithm (Li and Dewey, BMC Bioinformatics 2011)
+
+While more data has been collected, we downloaded gene expression data from $N_C =??$ patients with KIRC and $N_P = ??$ patients with KIRP.  For each patient, we have gene expression data for $N_G$ genes. 
 
 \section{Results}
 
+After normalization and low read-count gene filtering, we produced a list of p-values for differential expression of genes in the two cancer types. Table X summarizes the genes with the largest p-values. Fig. Y shows a histogram of the corrected p-values with lines showing typical significance levels. 
+
+As in Fig. X, we plotted the scores corresponding to the first two principal components. Evidently, the two cancer types separate nicely along the first principal component. (Not too surprisingly since we ran this analysis using only genes that were highly differentially expressed).  
+
+
 \section{Discussion}
+
+Our results are fundamentally limited due to the data. As this data was not designed for this type of experiment, necessary controls are not in place. For instance, the differences between gene expression may be due to technical effects. The RNAseq experiments were carried out a few months apart. It is not clear what efforts were made to standardize the procedure of processing the cancer samples. In the future, it would be important to have a negative control where two samples that are supposed to be the same are processed at during the two times that the cancer cells were processed. 
 
 \section{References}
 
 
 \section*{Acknowledgments}
-We would like to thank Davide Risso for pointing us to the Cancer Genome
-Atlas as well as providing feedback on our proposal.
+We would like to thank Davide Risso for pointing us to the Cancer Genome Atlas as well as providing feedback on our proposal. Sandrine Dudoit and Haiyan Huang offered us important feedback on our initial proposals as well as on our intermediate results. 
 
 \end{document}

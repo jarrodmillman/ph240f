@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 BUILDDIR = _build
-TARGET = kidney
+TARGET = final_paper
 INPUT = "../_style:"
 TEX2PDF := cd $(BUILDDIR) && TEXINPUTS=$(INPUT) pdflatex #-interaction=batchmode
 BIBTEX := cd $(BUILDDIR) && BSTINPUTS=$(INPUT) bibtex
@@ -21,6 +21,7 @@ $(BUILDDIR)/%.pdf: %.tex
 	($(TEX2PDF) $(@).tex)
 	($(TEX2PDF) $(@).tex)
 	cp $(BUILDDIR)/$(@).pdf $(@).pdf
+	open $(TARGET).pdf
 
 clean:
 	rm -rf $(BUILDDIR)/* $(TARGET).pdf
