@@ -24,49 +24,69 @@ b=rowMeans(exprs(eset)[,eset$type=="KIRP"])>=10
 f=(a|b)
 table(f)
 new_eset=eset[f]
-hist(log(exprs(eset)+1))
-hist(log(exprs(new_eset)+1))
+#17,075 genes after filter
+par(mfrow=c(1,2))
+hist(log(exprs(eset)+1),main="Pre-Filter Log Exprs.")
+hist(log(exprs(new_eset)+1),main="Filtered Log Exprs")
 
 boxplot(new_eset,main="Boxplots of Log-Expression for KIRC & KIRP Subjects")
 #look at Mean-Difference Plots from subjects within cell-types and between cell-types
 #might need to untransform eset from log since I think MDPlot takes the log for you
-
-MDPlot(new_eset,c(1,5))
-MDPlot(new_eset,c(48,60))
-MDPlot(new_eset,c(12,50))
-MDPlot(new_eset,c(12,70))
+par(mfrow=c(2,2))
+MDPlot(new_eset,c(1,5),main="Within KIRC")
+MDPlot(new_eset,c(48,60),main="Within KIRP")
+MDPlot(new_eset,c(12,50),main="KIRC vs. KIRP")
+MDPlot(new_eset,c(30,70),main="KIRC vs. KIRP")
 #looks like we may have an issue deciphering between biological and technical effects
 #potentially a batch effect?
 
 
 #boxplot(eset,main="Boxplots of Log-Expression for KIRC & KIRP Subjects")
+#### Specify training and test sets to use ####
+
+train.eset=new_eset[,eset$train]
+test.eset=new_eset[,!eset$train]
 
 #### NORMALIZATION ####
-norm_eset=betweenLaneNormalization(new_eset,which="upper",offset=F,round=F)
-lognorm_eset=log(exprs(norm_eset)+1)
+#Normalize Training Set
+train.norm_eset=betweenLaneNormalization(train.eset,which="upper",offset=F,round=F)
+type=eset$type[eset$train]
+train.lognorm_exprs=log(exprs(train.norm_eset)+1)
+upper=fivenum(exprs(train.norm_eset))[4]
+
+#Normalize the Test Set based on the upper quantile of the train set
+#find upper quantile of each gene
+test.norm_exprs=matrix(data=NA,nrow=17075,ncol=25)
+up.test=vector()
+for(i in 1:25){
+  up.test[i]=quantile(exprs(test.eset)[,i],.75)
+  test.norm_exprs[,i]=upper*exprs(test.eset)[,i]/up.test[i] 
+}
+par(mfrow=c(1,1))
+boxplot(log(test.norm_exprs+1))
 
 #check normalization 
 par(mfrow=c(2,2))
-MDPlot(norm_eset,c(1,5),main="within")
-MDPlot(norm_eset,c(48,60),main="within")
-MDPlot(norm_eset,c(12,50),main="bw")
-MDPlot(norm_eset,c(12,70),main="bw")
+MDPlot(train.norm_eset,c(1,5),main="Within KIRC")
+MDPlot(train.norm_eset,c(27,35),main="Within KIRP")
+MDPlot(train.norm_eset,c(12,40),main="KIRC vs. KIRP")
+MDPlot(train.norm_eset,c(3,29),main="KIRC vs. KIRP")
 
 par(mfrow=c(1,1))
 hist(log(exprs(norm_eset)+1))
 #### Attempt to figure out genes which have the most variance ####
 #Take genes with top 500 variances (do we want to do this in just the training set?)
-kirc.genes=names(sort(rowVars(lognorm_eset[,norm_eset$type=="KIRC"]),decreasing=T))[1:500]
-kirp.genes=names(sort(rowVars(lognorm_eset[,norm_eset$type=="KIRP"]),decreasing=T))[1:500]
-top.genes=names(sort(rowVars(lognorm_eset),decreasing=T))[1:500]
+kirc.genes=names(sort(rowVars(train.lognorm_exprs[,type=="KIRC"]),decreasing=T))[1:500]
+kirp.genes=names(sort(rowVars(train.lognorm_exprs[,type=="KIRP"]),decreasing=T))[1:500]
+top.genes=names(sort(rowVars(train.lognorm_exprs),decreasing=T))[1:500]
 
 
-kirc.var=(rowVars(lognorm_eset[,norm_eset$type=="KIRC"]))
-kirp.var=(rowVars(lognorm_eset[,norm_eset$type=="KIRP"]))
-kirc.mean=(rowMeans(lognorm_eset[,norm_eset$type=="KIRC"]))
-kirp.mean=(rowMeans(lognorm_eset[,norm_eset$type=="KIRP"]))
-kirc.n=sum(norm_eset$type=="KIRC")
-kirp.n=sum(norm_eset$type=="KIRP")
+kirc.var=(rowVars(train.lognorm_exprs[,type=="KIRC"]))
+kirp.var=(rowVars(train.lognorm_exprs[,type=="KIRP"]))
+kirc.mean=(rowMeans(train.lognorm_exprs[,type=="KIRC"]))
+kirp.mean=(rowMeans(train.lognorm_exprs[,type=="KIRP"]))
+kirc.n=sum(type=="KIRC")
+kirp.n=sum(type=="KIRP")
 #### t-tests for difference of mean expression ####
 #Using wiki t-test for unequal sample sizes/variances
 #work in progress
@@ -80,19 +100,20 @@ pvals=2*pt(-abs(t),df)
 par(mfrow=c(1,2))
 hist(pvals,main="Gene P-Values")
 hist(log(pvals),main="Gene Log P-Values")
+sort.pvals=sort(pvals)
 
-##### P-values using FDR ####
-fdr.pvals=p.adjust(pvals,method="fdr")
-par(mfrow=c(1,2))
-hist(log(pvals),main="Log Regular P")
-hist(log(fdr.pvals),main="Log FDR P")
+ngenes=58
+top.pvals=sort.pvals[1:ngenes]
 
+pval.ind=vector()
+for(i in 1:ngenes){
+  pval.ind[i]=which(pvals==top.pvals[i])
+}
 
-top.pvals=(log(pvals)<=-80)
-pval.ind=which(log(pvals)<=-80)
-filt.lognorm_eset=lognorm_eset[top.pvals,]
-
-fit=princomp(t(filt.lognorm_eset),cor=T)
+filt.train=exprs(train.norm_eset)[pval.ind,]
+filt.test=test.norm_exprs[pval.ind,]
+rownames(filt.test)=rownames(filt.train)
+fit=princomp(t(filt.train),cor=T)
 
 loadings(fit)
 par(mfrow=c(1,1))
@@ -100,7 +121,7 @@ plot(fit)
 score1=fit$scores[,1]
 score2=fit$scores[,2]
 plot(score1,score2,col=ifelse((norm_eset$type=="KIRC"),"red","blue"),main="PC1 vs. PC2, Colored by Cancer")
-legend("bottomleft",c("KIRC","KIRP"),text.col=c("red","blue"),cex=.8)
+legend("topright",c("KIRC","KIRP"),text.col=c("red","blue"),cex=.8)
 
 fit$loadings[,1]
 
@@ -111,10 +132,11 @@ require("class")
 #### Support Vector Machines Classification ####
 require("e1071")
 #use functions svm, predict.svm
-trainy=norm_eset$type[which(eset$train)]
-testy=norm_eset$type[which(!eset$train)]
-trainx=fit$scores[which(eset$train),]
-testx=fit$scores[which(!eset$train),]
+trainy=eset$type[which(eset$train)]
+testy=eset$type[which(!eset$train)]
+trainx=t(filt.train)
+testx=t(filt.test)
+
 SVM=svm(trainy~.,data=trainx)
 svm.pred=predict(SVM,testx)
 table(pred=svm.pred,true=testy)
@@ -126,13 +148,8 @@ require("randomForest")
 #testx=t(lognorm_eset[,which(!eset$train)])
 
 #use function randomForest
-rf.fit=randomForest(trainy~.,data=trainx,proximity=T,importance=T)
+rf.fit=randomForest(x=trainx,y=trainy,proximity=T,importance=T)
 rf.pred=predict(rf.fit,testx)
 table(pred=rf.pred,true=testy)
 
-#### SuperLearner ####
-#require('SuperLearner')
-#SL.library=c('SL.randomForest','SL.svm','SL.knn')
-#trainyy=1*trainy
-#SL=SuperLearner(Y=as.numeric(trainy)-1,X=data.frame(trainx),newX=data.frame(testx),SL.library=SL.library,family=binomial())
-#SL$SL.predict
+
