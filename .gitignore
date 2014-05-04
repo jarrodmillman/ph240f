@@ -1,6 +1,7 @@
 # Built objects
 kidney.pdf
-_build
+code/_build
+paper/_build
 
 # LaTeX projects
 *.aux
