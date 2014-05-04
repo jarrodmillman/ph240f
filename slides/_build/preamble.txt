@@ -1,0 +1,7 @@
+\author[KJ Millman]{K. Jarrod Millman}
+
+\institute[UCB]{
+  Alex Anderson, K. Jarrod Millman, and Lara Troszak\\[8ex]
+  Public Health 240F: Statistical Genomics II\\[1ex]
+  Thursday, May 8, 2014\\
+}
