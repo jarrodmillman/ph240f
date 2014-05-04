@@ -16,8 +16,8 @@ $(BUILDDIR)/%.pdf: %.tex
 
 %: %.tex $(BUILDDIR)
 	cp $(@).{tex,bib} $(BUILDDIR)
-#	($(TEX2PDF) $(@).tex)
-#	($(BIBTEX) $(@))
+	($(TEX2PDF) $(@).tex)
+	($(BIBTEX) $(@))
 	($(TEX2PDF) $(@).tex)
 	($(TEX2PDF) $(@).tex)
 	cp $(BUILDDIR)/$(@).pdf $(@).pdf
