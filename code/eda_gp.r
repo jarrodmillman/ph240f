@@ -102,7 +102,7 @@ hist(pvals,main="Gene P-Values")
 hist(log(pvals),main="Gene Log P-Values")
 sort.pvals=sort(pvals)
 
-ngenes=58
+ngenes=40
 top.pvals=sort.pvals[1:ngenes]
 
 pval.ind=vector()
