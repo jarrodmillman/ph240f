@@ -1,0 +1,6 @@
+      true
+pred   KIRC KIRP
+  KIRC   10    0
+  KIRP    1   14
+
+SVM with P-Value Gene Subset
