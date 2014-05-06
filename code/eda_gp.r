@@ -29,7 +29,7 @@ par(mfrow=c(1,2))
 hist(log(exprs(eset)+1),main="Pre-Filter Log Exprs.",xlab="Log Expression")
 hist(log(exprs(new_eset)+1),main="Filtered Log Exprs",xlab="Log Expression")
 
-boxplot(new_eset,main="Boxplots of Log-Expression for KIRC & KIRP Subjects")
+boxplot(log(1+exprs(new_eset)),main="Boxplots of Log-Expression for KIRC & KIRP Subjects",xlab="Subjects")
 #look at Mean-Difference Plots from subjects within cell-types and between cell-types
 #might need to untransform eset from log since I think MDPlot takes the log for you
 par(mfrow=c(2,2))
@@ -63,7 +63,7 @@ for(i in 1:dim(test.eset)[2]){
   test.norm_exprs[,i]=upper*exprs(test.eset)[,i]/up.test[i] 
 }
 par(mfrow=c(1,1))
-boxplot(log(test.norm_exprs+1))
+boxplot(log(test.norm_exprs+1),main="Post Norm. Test Set Boxplot",xlab="Subjects")
 rownames(test.norm_exprs)=rownames(train.norm_eset)
 #check normalization 
 par(mfrow=c(2,2))
