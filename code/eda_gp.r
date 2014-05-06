@@ -24,7 +24,7 @@ b=rowMeans(exprs(eset)[,eset$type=="KIRP" & eset$train])>=10
 f=(a|b)
 table(f)
 new_eset=eset[f]
-#17,075 genes after filter
+#17,136 genes after filter
 par(mfrow=c(1,2))
 hist(log(exprs(eset)+1),main="Pre-Filter Log Exprs.")
 hist(log(exprs(new_eset)+1),main="Filtered Log Exprs")
@@ -56,9 +56,9 @@ upper=fivenum(exprs(train.norm_eset))[4]
 
 #Normalize the Test Set based on the upper quantile of the train set
 #find upper quantile of each gene
-test.norm_exprs=matrix(data=NA,nrow=17075,ncol=25)
+test.norm_exprs=matrix(data=NA,nrow=dim(exprs(new_eset))[1],ncol=dim(test.eset)[2])
 up.test=vector()
-for(i in 1:25){
+for(i in 1:dim(test.eset)[2]){
   up.test[i]=quantile(exprs(test.eset)[,i],.75)
   test.norm_exprs[,i]=upper*exprs(test.eset)[,i]/up.test[i] 
 }
@@ -73,7 +73,7 @@ MDPlot(train.norm_eset,c(12,40),main="KIRC vs. KIRP")
 MDPlot(train.norm_eset,c(3,29),main="KIRC vs. KIRP")
 
 par(mfrow=c(1,1))
-hist(log(exprs(norm_eset)+1))
+hist(log(exprs(train.norm_eset)+1))
 #### Attempt to figure out genes which have the most variance ####
 #Take genes with top 500 variances (do we want to do this in just the training set?)
 kirc.genes=names(sort(rowVars(train.lognorm_exprs[,type=="KIRC"]),decreasing=T))[1:500]
@@ -120,22 +120,27 @@ par(mfrow=c(1,1))
 plot(fit)
 score1=fit$scores[,1]
 score2=fit$scores[,2]
-plot(score1,score2,col=ifelse((norm_eset$type=="KIRC"),"red","blue"),main="PC1 vs. PC2, Colored by Cancer")
+plot(score1,score2,col=ifelse((train.norm_eset$type=="KIRC"),"red","blue"),main="PC1 vs. PC2, Colored by Cancer")
 legend("topright",c("KIRC","KIRP"),text.col=c("red","blue"),cex=.8)
 
 fit$loadings[,1]
 
-#### KNN Classification ####
-require("class")
-#use function knn
+
+#### Classifications ####
+trainy=eset$type[which(eset$train)]
+testy=eset$type[which(!eset$train)]
+trainx=as.data.frame(t(filt.train))
+testx=as.data.frame(t(filt.test))
+#### LDA Classification ####
+require("MASS")
+#use function lda
+LDA=lda(trainy~.,data=trainx)
+lda.pred=predict(LDA,testx)
+table(pred=lda.pred$class,true=testy)
 
 #### Support Vector Machines Classification ####
 require("e1071")
 #use functions svm, predict.svm
-trainy=eset$type[which(eset$train)]
-testy=eset$type[which(!eset$train)]
-trainx=t(filt.train)
-testx=t(filt.test)
 
 SVM=svm(trainy~.,data=trainx)
 svm.pred=predict(SVM,testx)
@@ -148,8 +153,22 @@ require("randomForest")
 #testx=t(lognorm_eset[,which(!eset$train)])
 
 #use function randomForest
-rf.fit=randomForest(x=trainx,y=trainy,proximity=T,importance=T)
-rf.pred=predict(rf.fit,testx)
+ngenes.rf=17136
+top.pvals.rf=sort.pvals[1:ngenes.rf]
+
+pval.ind.rf=vector()
+for(i in 1:ngenes.rf){
+  pval.ind.rf[i]=which(pvals==top.pvals.rf[i])
+}
+
+filt.train.rf=exprs(train.norm_eset)[pval.ind.rf,]
+filt.test.rf=test.norm_exprs[pval.ind.rf,]
+trainx.rf=as.data.frame(t(filt.train.rf))
+testx.rf=as.data.frame(t(filt.test.rf))
+colnames(testx.rf)=colnames(trainx.rf)
+rf.fit=randomForest(x=trainx.rf,y=trainy,proximity=T,importance=T)
+rf.pred=predict(rf.fit,testx.rf)
 table(pred=rf.pred,true=testy)
 
+#Interestingly random forest does worse when I feed it more genes...
 
