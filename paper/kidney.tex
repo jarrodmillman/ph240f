@@ -25,20 +25,21 @@ two different cancer cells. Specifically, we look at Kidney renal
 papillary cell carcinoma (KIRP) and Kidney renal clear cell carcinoma (KIRC)
 from the Cancer Genome Atlas.\footnote{\url{https://tcga-data.nci.nih.gov/tcga/}}
 
-Using the unnormalized RNAseq expected count data from this website, we will
+Using the unnormalized RNA-Seq expected count data from this website, we will
 perform exploratory data analysis, looking at the need for normalization, low
 count filtering, batch effects, and outlier removal.
 
-Moving forward, we will utilize k-fold cross validation to assess our
+Moving forward, we will utilize cross validation to assess our
 classification methods. Using the training sets we rank the genes in terms
-of differential expression between cell types based on their p-values.  These
-ranks will be used for feature selection, comparing classification performance
+of differential expression between cell types based on their p-values.  These p-values 
+are only utilized to rank the genes; we do not claim that they have any further meaning.
+These ranks will be used for feature selection, comparing classification performance
 based on different numbers of features (selection of the top 10, 20, 30, and 40
 genes as features).
 
 Finally, we perform several classification methods per feature set
 (training our methods on the training data sets and testing our methods on the
-validation data sets): K-Nearest Neighbors, Linear Discriminant Analysis, and
+validation data sets): Linear Discriminant Analysis, and
 Support Vector Machines.  Additionally, we compare these methods to the
 Random Forest classifier.
 
@@ -59,7 +60,12 @@ Random Forest classifier.
 
 High throughput sequencing technology has revolutionized our ability to
 understand how cells function, or in the case of cancer, malfunction. In this
-study, we analyze RNAseq data from two types of renal cell carcinomas. 
+study, we analyze RNA-Seq data from two types of renal cell carcinomas, clear and papillary. 
+In this context, identifying a patient's cancer cell type informs the prognosis for the patient
+and on how aggressively to treat the patient; clear cell carcinoma is considered the least likely to spread
+and more likely to respond favorably to treatment. Therefore, our aim is to classify a patient's cancer type 
+given their RNA-Seq expression data. To achieve this goal, we compare the accuracy of 
+several classification methods.
 
 
 \section{Methods}
@@ -69,13 +75,23 @@ Starting from gene expression levels using the RSEM algorithm, we carried out
 the following steps to analyze our data:
 
 \begin{enumerate}
-\item Split the data into training and test sets. 
-\item Filter out genes with low average read counts for both cancer types in the training set. 
-\item Upper quantile normalization of the log counts in the training set, and store the value that the 3rd quantile get set to. 
-\item Feature Selection (i.e. genes) using unequal sample size, unequal variance two-sided t-tests. 
-\item Use the FDR method for adjusting p-values to correct for multiple comparisons. (NOT SURE WHAT R DOES HERE... IT CHANGES THE P-VALUES)
-\item Train a classifier on the training data
+\item Split the data into training and validation sets. Two-thirds of our 72 subjects are allocated into the training set,
+the rest are in the validation set.
+\item Filter out genes with low average read counts for both cancer types in the training set. Specifically, if the 
+mean expression count for a gene is less than 10 for both the KIRC and KIRP subjects, then the gene is filtered out of the training
+set.
+\item Perform upper quantile normalization on the expression counts in the training set. The upper quantile of the normalized counts is stored and used to apply the training set's normalization to the test set counts.
+\item Select features (i.e. genes) with which to train the classifiers in two ways:
+\begin{itemize}
+\item[-] Ranking the p-values from unequal sample size, unequal variance two-sided t-tests in the training set and selecting the genes with p-values below some threshold (i.e. picking the top 500 genes with the smallest p-values)
+\item[-] Ranking the genes based on the variance of their expression counts across KIRC and KIRP subjects and selecting the
+top genes with the largest variance.
+\end{itemize}
+\item Train several classifiers on the training data, with the selected features. Classifiers include Linear Discriminant Analysis, Support Machine Vectors, and Random Forest. Note that when training Random Forest, we include all of the genes instead of the just the selected features and allow it to make the decision on which genes best classify the two cancer cell types.
 \item Filter and normalize the test data using the values from the second and third steps. 
+\item Use the classifiers to predict cancer cell type for the subjects in the validation set.
+\item Compare the accuracy of the predictions made by the classifiers by examining the proportion of correctly classified
+subjects in the test set.
 \end{enumerate}
 
 \begin{figure}[H]
@@ -124,8 +140,8 @@ that patient is.
 \section{Data}
 
 The Cancer Genome Atlas (TCGA) collects and analyzes high-quality tumor samples
-and makes a variety of data available online. We have downloaded RNA seq data
-for two types of cancer, KIRC and KIRP. The data was collected by the David
+and makes a variety of data available online. We have downloaded RNA-Seq data
+for two types of kidney cancer, KIRC and KIRP. The data was collected by the David
 Neil Hayes group at UNC Chapel Hill. The data was produced using Illumina HiSeq
 2000 sequencers. 
 
@@ -133,18 +149,27 @@ Counts per genes (GAF TCGA hg19 June 2011 build) calculated using the SeqWare
 framework via the RSEM algorithm \cite{li2011rsem}.
 
 While more data has been collected, we downloaded gene expression data from
-$N_C =??$ patients with KIRC and $N_P = ??$ patients with KIRP.  For each
-patient, we have gene expression data for $N_G$ genes. 
+$N_C =35$ patients with KIRC and $N_P = 37$ patients with KIRP.  For each
+patient, we have gene expression data for $18,205$ genes. 
+
+The data portal on TCGA website shows that subjects are organized into batches. A batch consists of
+a group of subjects whose samples were processed together. Unfortunately,
+we were unable to collect this information with the expression counts. Therefore, we are 
+unable to examine possible batch effects that might obscure our feature selection. 
 
 \section{Results}
 
-After normalization and low read-count gene filtering, we produced a list of
-p-values for differential expression of genes in the two cancer types. Table X
-summarizes the genes with the largest p-values. Fig. Y shows a histogram of the
-corrected p-values with lines showing typical significance levels. 
-
+After normalization and low read-count gene filtering, we attempted to select the best
+genes to feed into the Support Vector Machines and Linear Discriminant Analysis classifiers.
+We first produced a list of the genes with the largest variances across KIRC and KIRP subjects.
+The top $N_best$ genes are presented in Table Y. Additionally, we produced a list of p-values
+ for differential expression of genes in the two cancer types. Table X summarizes the genes with 
+ the smallest p-values. Fig. Y shows a histogram of the p-values with lines showing typical 
+ significance levels. 
+ 
 As in Fig. X, we plotted the scores corresponding to the first two principal
-components. Evidently, the two cancer types separate nicely along the first
+components and colored the points according the cancer cell type. 
+Evidently, the two cancer types separate nicely along the first
 principal component. (Not too surprisingly since we ran this analysis using
 only genes that were highly differentially expressed).  
 
@@ -154,12 +179,30 @@ only genes that were highly differentially expressed).
 Our results are fundamentally limited due to the data. As this data was not
 designed for this type of experiment, necessary controls are not in place. For
 instance, the differences between gene expression may be due to technical
-effects. The RNAseq experiments were carried out a few months apart. It is not
-clear what efforts were made to standardize the procedure of processing the
-cancer samples. In the future, it would be important to have a negative control
-where two samples that are supposed to be the same are processed at during the
-two times that the cancer cells were processed. 
+effects. We do not have batch information for the subjects, so we cannot try 
+to correct for possible batch effect. Fig. Z shows Mean-Difference Plots of
+subjects within the same cancer cell type and of subjects with differing cell types.
+From these plots, we see that the magnitude of technical effects within a cell type
+is similar to the magnitude of the biological effects between cell types which interest
+us. Also, the RNA-Seq experiments were 
+carried out a few months apart. It is not clear what efforts were made to 
+standardize the procedure of processing the cancer samples. In the future, 
+it would be important to have a negative control where two samples that are 
+supposed to be the same are processed at during the two times that the cancer 
+cells were processed. 
 
+Nonetheless, all of our classification methods appear to satisfactorily predict 
+cancer cell type in new patients, given their expression in some selected genes.
+The proportion of correctly classified subjects for each of the methods supports this conclusion:
+\begin{enumerate}
+\item Support Machine Vectors - $Accuracy = ??$
+\item Linear Discriminant Analysis - $Accuracy = ??$
+\item Random Forest - $Accuracy = ??$
+\end{enumerate}
+
+In the future,  it may be interesting to compare different ways of normalizing the data. For instance,
+we chose upper quantile normalization for our analysis due to its frequent use and because it alter 
+count distributions as radically as full quantile normalization.
 \section*{Acknowledgments}
 
 We would like to thank Davide Risso for pointing us to the Cancer Genome Atlas
