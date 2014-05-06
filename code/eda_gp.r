@@ -18,9 +18,9 @@ max(prop0)
 min(prop0)
 
 
-#Filter out some more low count genes
-a=rowMeans(exprs(eset)[,eset$type=="KIRC"])>=10
-b=rowMeans(exprs(eset)[,eset$type=="KIRP"])>=10
+#Filter out some more low count genes 
+a=rowMeans(exprs(eset)[,eset$type=="KIRC" && eset$train])>=10
+b=rowMeans(exprs(eset)[,eset$type=="KIRP" && eset$train])>=10
 f=(a|b)
 table(f)
 new_eset=eset[f]
