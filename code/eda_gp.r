@@ -112,14 +112,14 @@ for(i in 1:ngenes){
 }
 
 pnames=names(pvals[pval.ind])
-pts=t[pval.ind]
+T=t[pval.ind]
 df=df[pval.ind]
-ps=pvals[pval.ind]
-psubset=as.data.frame(cbind(pnames,pts,df,ps))
+PValue=pvals[pval.ind]
+psubset=as.data.frame(cbind(T,df,PValue))
 #print out table of p-val subset of genes
 require(gridExtra)
-pdf("../fig/topgenes_p.pdf",height=11,width=8.5)
-grid.table(psubset)
+pdf("../fig/topgenes_p.pdf",height=11,width=6)
+grid.table(psubset,gp=gpar(fontsize=8))
 dev.off()
 
 filt.train=exprs(train.norm_eset)[pval.ind,]
