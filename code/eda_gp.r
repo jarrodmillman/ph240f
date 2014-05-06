@@ -26,8 +26,8 @@ table(f)
 new_eset=eset[f]
 #17,136 genes after filter
 par(mfrow=c(1,2))
-hist(log(exprs(eset)+1),main="Pre-Filter Log Exprs.")
-hist(log(exprs(new_eset)+1),main="Filtered Log Exprs")
+hist(log(exprs(eset)+1),main="Pre-Filter Log Exprs.",xlab="Log Expression")
+hist(log(exprs(new_eset)+1),main="Filtered Log Exprs",xlab="Log Expression")
 
 boxplot(new_eset,main="Boxplots of Log-Expression for KIRC & KIRP Subjects")
 #look at Mean-Difference Plots from subjects within cell-types and between cell-types
@@ -73,7 +73,7 @@ MDPlot(train.norm_eset,c(12,40),main="KIRC vs. KIRP")
 MDPlot(train.norm_eset,c(3,29),main="KIRC vs. KIRP")
 
 par(mfrow=c(1,1))
-hist(log(exprs(train.norm_eset)+1))
+hist(log(exprs(train.norm_eset)+1),main="Post Norm. Log Expression",xlab="Log Expression")
 #### Attempt to figure out genes which have the most variance ####
 #Take genes with top 500 variances (do we want to do this in just the training set?)
 kirc.genes=names(sort(rowVars(train.lognorm_exprs[,type=="KIRC"]),decreasing=T))[1:500]
