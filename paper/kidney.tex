@@ -79,7 +79,7 @@ the following steps to analyze our data:
 the rest are in the validation set.
 \item Filter out genes with low average read counts for both cancer types in the training set. Specifically, if the 
 mean expression count for a gene is less than 10 for both the KIRC and KIRP subjects, then the gene is filtered out of the training
-set.
+set. After filtering, the number of genes we consider drops from $18,205$ to $17,136$.
 \item Perform upper quantile normalization on the expression counts in the training set. The upper quantile of the normalized counts is stored and used to apply the training set's normalization to the test set counts.
 \item Select features (i.e. genes) with which to train the classifiers in two ways:
 \begin{itemize}
@@ -90,7 +90,7 @@ top genes with the largest variance.
 \item Train several classifiers on the training data, with the selected features. Classifiers include Linear Discriminant Analysis, Support Machine Vectors, and Random Forest. Note that when training Random Forest, we include all of the genes instead of the just the selected features and allow it to make the decision on which genes best classify the two cancer cell types.
 \item Filter and normalize the test data using the values from the second and third steps. 
 \item Use the classifiers to predict cancer cell type for the subjects in the validation set.
-\item Compare the accuracy of the predictions made by the classifiers by examining the proportion of correctly classified
+\item Compare the accuracies of the predictions made by the classifiers by examining the proportion of correctly classified
 subjects in the test set.
 \end{enumerate}
 
@@ -122,10 +122,26 @@ s_{\overline{X}_1-\overline{X}_2} = \sqrt{\frac{s_1^2}{n_1}+\frac{s_2^2}{n_2}} \
 We investigated applied a number of methods in order to classify our data:
 
 \begin{enumerate}
-\item Principal Components Analysis - Choose the genes with the top X pvalues. 
+\item Principal Components Analysis - Choose the genes with the top X p-values. 
 \item Support Vector Machines
+\begin{itemize}
+\item[-] SVM represents the training data as points in a space and maps them in a way
+that the space between KIRC subjects and KIRP subjects is as wide as possible
+\item[-] The validation data is then mapped into the same space. Predictions of cancer
+cell type for these points are made based on which side of the dividing space that they fall. 
+\end{itemize}
 \item Linear Discriminant Analysis (with two clusters)
+\begin{itemize}
+\item[-] LDA finds the linear combination of genes, in our situation, which best separates our
+training data into its two classes (KIRP and KIRC)
+\item[-] This method is related to Principal Component Analysis; but differs in that LDA tries to
+actually model the differences between categorical responses.
+\end{itemize}
 \item Random Forests
+\begin{itemize}
+\item[-] Random Forest builds numerous classification trees, each one constructed on a random subset of
+features (genes), and predicts class based on the majority vote from all of the trees.
+\end{itemize}
 \end{enumerate}
 
 \subsection{Performance Metrics}
@@ -159,7 +175,7 @@ unable to examine possible batch effects that might obscure our feature selectio
 
 \section{Results}
 
-After normalization and low read-count gene filtering, we attempted to select the best
+After normalization and low read-count gene filtering, we attempt to select the best
 genes to feed into the Support Vector Machines and Linear Discriminant Analysis classifiers.
 We first produced a list of the genes with the largest variances across KIRC and KIRP subjects.
 The top $N_best$ genes are presented in Table Y. Additionally, we produced a list of p-values
@@ -182,6 +198,11 @@ instance, the differences between gene expression may be due to technical
 effects. We do not have batch information for the subjects, so we cannot try 
 to correct for possible batch effect. Fig. Z shows Mean-Difference Plots of
 subjects within the same cancer cell type and of subjects with differing cell types.
+This is problematic because differences in expression between groups may be 
+due to technical effects as opposed to biological effects of interest. In our feature 
+selection, we might be unknowingly, choosing genes on which to build the classifiers
+that reflect the technical effects, and not those that reflect biological differences between
+subjects with KIRC and KIRP.
 From these plots, we see that the magnitude of technical effects within a cell type
 is similar to the magnitude of the biological effects between cell types which interest
 us. Also, the RNA-Seq experiments were 
@@ -192,13 +213,30 @@ supposed to be the same are processed at during the two times that the cancer
 cells were processed. 
 
 Nonetheless, all of our classification methods appear to satisfactorily predict 
-cancer cell type in new patients, given their expression in some selected genes.
-The proportion of correctly classified subjects for each of the methods supports this conclusion:
+cancer cell type in new patients, given their expression in some selected genes. The classifiers
+using the subset of genes determined by ranked p-values performed slightly better than the classifiers
+built with the subset of genes with the largest variances.
+
+The proportion of correctly classified subjects for each of the methods using the smallest p-value subset of
+genes is as follows:
 \begin{enumerate}
-\item Support Machine Vectors - $Accuracy = ??$
-\item Linear Discriminant Analysis - $Accuracy = ??$
-\item Random Forest - $Accuracy = ??$
+\item Support Vector Machine - $Accuracy = 96\%$
+\item Linear Discriminant Analysis - $Accuracy = 76\%$
 \end{enumerate}
+
+The proportion of correctly classified subjects for each of the methods using the largest variance subset of
+genes is as follows:
+\begin{enumerate}
+\item Support Vector Machine - $Accuracy = 84\% $
+\item Linear Discriminant Analysis - $Accuracy =68\% $
+\end{enumerate}
+
+Random Forest is not built on a subset of the genes in our dataset, but rather all of the genes. It is allowed
+to determine the best subset of genes for classification of cell type. The proportion of correctly 
+classified validation subjects using Random Forest is $88\%$.
+
+The classifier that best predicts cancer cell types in the validation set is Support Vector Machine, 
+correctly predicting for $24$ out of $25$ subjects.
 
 In the future,  it may be interesting to compare different ways of normalizing the data. For instance,
 we chose upper quantile normalization for our analysis due to its frequent use and because it alter 

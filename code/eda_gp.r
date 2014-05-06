@@ -64,7 +64,7 @@ for(i in 1:dim(test.eset)[2]){
 }
 par(mfrow=c(1,1))
 boxplot(log(test.norm_exprs+1))
-
+rownames(test.norm_exprs)=rownames(train.norm_eset)
 #check normalization 
 par(mfrow=c(2,2))
 MDPlot(train.norm_eset,c(1,5),main="Within KIRC")
@@ -127,24 +127,41 @@ fit$loadings[,1]
 
 
 #### Classifications ####
+#using p-value subset of genes
 trainy=eset$type[which(eset$train)]
 testy=eset$type[which(!eset$train)]
 trainx=as.data.frame(t(filt.train))
 testx=as.data.frame(t(filt.test))
+
+#using largest variance subset
+trainx2=as.data.frame(t(exprs(train.norm_eset[top.genes[1:40],])))
+testx2=as.data.frame(t(test.norm_exprs[top.genes[1:40],]))
 #### LDA Classification ####
 require("MASS")
-#use function lda
+#use function lda 
+#pvalue subset LDA
 LDA=lda(trainy~.,data=trainx)
 lda.pred=predict(LDA,testx)
 table(pred=lda.pred$class,true=testy)
 
+#var subset lda
+LDA2=lda(trainy~.,data=trainx2)
+lda.pred2=predict(LDA2,testx2)
+table(pred=lda.pred2$class,true=testy)
+
 #### Support Vector Machines Classification ####
 require("e1071")
 #use functions svm, predict.svm
-
+#pvalue subset SVM
 SVM=svm(trainy~.,data=trainx)
 svm.pred=predict(SVM,testx)
 table(pred=svm.pred,true=testy)
+
+#var subset SVM
+SVM2=svm(trainy~.,data=trainx2)
+svm.pred2=predict(SVM2,testx2)
+table(pred=svm.pred2,true=testy)
+
 
 #### Random Forest Classification ####
 require("randomForest")
