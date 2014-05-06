@@ -87,6 +87,7 @@ kirc.mean=(rowMeans(train.lognorm_exprs[,type=="KIRC"]))
 kirp.mean=(rowMeans(train.lognorm_exprs[,type=="KIRP"]))
 kirc.n=sum(type=="KIRC")
 kirp.n=sum(type=="KIRP")
+
 #### t-tests for difference of mean expression ####
 #Using wiki t-test for unequal sample sizes/variances
 #work in progress
@@ -109,6 +110,17 @@ pval.ind=vector()
 for(i in 1:ngenes){
   pval.ind[i]=which(pvals==top.pvals[i])
 }
+
+pnames=names(pvals[pval.ind])
+pts=t[pval.ind]
+df=df[pval.ind]
+ps=pvals[pval.ind]
+psubset=as.data.frame(cbind(pnames,pts,df,ps))
+#print out table of p-val subset of genes
+require(gridExtra)
+pdf("../fig/topgenes_p.pdf",height=11,width=8.5)
+grid.table(psubset)
+dev.off()
 
 filt.train=exprs(train.norm_eset)[pval.ind,]
 filt.test=test.norm_exprs[pval.ind,]
@@ -188,4 +200,7 @@ rf.pred=predict(rf.fit,testx.rf)
 table(pred=rf.pred,true=testy)
 
 #Interestingly random forest does worse when I feed it more genes...
-
+accuracies=c(19/25,17/25,24/25,21/25,22/25)
+methods=c("LDAp","LDAv","SVMp","SVMv","RF")
+?barplot
+barplot(accuracies*100,names.arg=methods,ylim=c(0,100),ylab="Accuracy",xlab="Method",main="Test Set Accuracy")
