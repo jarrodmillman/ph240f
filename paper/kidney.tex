@@ -23,27 +23,28 @@
 In this project, we compare classification methods for discriminating between
 two different cancer cells. Specifically, we look at Kidney renal
 papillary cell carcinoma (KIRP) and Kidney renal clear cell carcinoma (KIRC)
-from the Cancer Genome Atlas.\footnote{\url{https://tcga-data.nci.nih.gov/tcga/}}
+from the Cancer Genome Atlas (TCGA).\footnote{\url{https://tcga-data.nci.nih.gov/tcga/}}
 
-Using the unnormalized RNA-Seq expected count data from this website, we will
-perform exploratory data analysis, looking at the need for normalization, low
+TCGA provides high-quality, unnormalized RNA-Seq expected count data for both
+KIRP and KIRC (as well as many other cancer types).  We randomly split the data into
+training and validation sets. Before trying to classify
+the two cancer cells based on the expected count data, we performed extensive
+exploratory data analysis, looking at the need for normalization, low
 count filtering, batch effects, and outlier removal.
 
-Moving forward, we will utilize cross validation to assess our
-classification methods. Using the training sets we rank the genes in terms
-of differential expression between cell types based on their p-values.  These p-values 
-are only utilized to rank the genes; we do not claim that they have any further meaning.
-These ranks will be used for feature selection, comparing classification performance
-based on different numbers of features (selection of the top 10, 20, 30, and 40
-genes as features).
+After filtering and normalizing the data, we performed feature selection by two
+different techniques:  (1) high variability in expected counts across cancer
+types and (2) largest test statistics computed via a two-sample t-test.  We then
+compared linear discriminant analysis (LDA) and support vector machine (SVM)
+classifiers using the two feature selection methods.  We also compared the
+performance of the Random Forest (RF) classifier using all the genes (i.e., no
+filtering of features prior to using RF.
 
-Finally, we perform several classification methods per feature set
-(training our methods on the training data sets and testing our methods on the
-validation data sets): Linear Discriminant Analysis, and
-Support Vector Machines.  Additionally, we compare these methods to the
-Random Forest classifier.
+We found that selecting features using the largest test statistics computed via
+a two-sample t-test performed better than simply selecting the most variable
+genes for both LDA and SVM.  RF performed better than LDA, but SVM using
+the test statistic based feature selection performed best.
 
- 
 \end{abstract}
 
 \begin{keyword}
@@ -141,6 +142,13 @@ subjects in the test set.
     \includegraphics[width=.8\textwidth]{../../fig/pcplot.png}
 \caption{PCA }
    \label{fig:pca}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+    \includegraphics[width=.8\textwidth]{../../fig/testset_acc.png}
+\caption{Performance }
+   \label{fig:performance}
 \end{figure}
 
 
