@@ -125,17 +125,18 @@ dev.off()
 filt.train=exprs(train.norm_eset)[pval.ind,]
 filt.test=test.norm_exprs[pval.ind,]
 rownames(filt.test)=rownames(filt.train)
-fit=princomp(t(filt.train),cor=T)
+fit=prcomp(t(filt.train))
 
-loadings(fit)
 par(mfrow=c(1,1))
 plot(fit)
-score1=fit$scores[,1]
-score2=fit$scores[,2]
-plot(score1,score2,col=ifelse((train.norm_eset$type=="KIRC"),"red","blue"),main="PC1 vs. PC2, Colored by Cancer")
+score1=fit$x[,1]
+score2=fit$x[,2]
+plot(score1,score2,col=ifelse((train.norm_eset$type=="KIRC"),"red","blue"),main="PC1 vs. PC2, Colored by Cancer (Train)")
 legend("topright",c("KIRC","KIRP"),text.col=c("red","blue"),cex=.8)
-
-fit$loadings[,1]
+fit.test=predict(fit,newdata=t(filt.test))
+#Plot of PC applied to test data
+plot(fit.test[,1],fit.test[,2],col=ifelse((test.eset$type=="KIRC"),"red","blue"),main="PC1 vs. PC2, Colored by Cancer (Test)")
+legend("topright",c("KIRC","KIRP"),text.col=c("red","blue"),cex=.8)
 
 
 #### Classifications ####
