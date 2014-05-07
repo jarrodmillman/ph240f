@@ -96,10 +96,53 @@ subjects in the test set.
 
 \begin{figure}[H]
   \centering
-    \includegraphics[width=.5\textwidth]{../../fig/histogram.png}
+    \includegraphics[width=.8\textwidth]{../../fig/rsem.png}
+\caption{RSEM }
+   \label{fig:rsem}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+    \includegraphics[width=\textwidth]{../../fig/filter_histograms.png}
 \caption{Histogram }
    \label{fig:histogram}
 \end{figure}
+
+\begin{figure}[H]
+  \centering
+    \includegraphics[width=\textwidth]{../../fig/mdplots_postnorm.png}
+\caption{MD plots }
+   \label{fig:mdplot}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+    \includegraphics[width=\textwidth]{../../fig/postfilter_boxplot.png}
+\caption{Boxplot }
+   \label{fig:boxplot}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+    \includegraphics[width=.8\textwidth]{../../fig/postnorm_test_boxplot.png}
+\caption{Boxplots after normalization }
+   \label{fig:boxplotpost}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+    \includegraphics[width=.8\textwidth]{../../fig/postnorm_histogram.png}
+\caption{Histogram after normalization  }
+   \label{fig:histogram}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+    \includegraphics[width=.8\textwidth]{../../fig/pcplot.png}
+\caption{PCA }
+   \label{fig:pca}
+\end{figure}
+
 
 % Figure: histogram of gene expression after filtering. Looks reasonably normal. 
 % Figure: box-plots of the normalized data
@@ -189,6 +232,44 @@ Evidently, the two cancer types separate nicely along the first
 principal component. (Not too surprisingly since we ran this analysis using
 only genes that were highly differentially expressed).  
 
+%\begin{minipage}[c]{0.3\linewidth}
+%\begin{quote}{\tiny  \ttfamily \raggedright \noindent
+%~~~Variance~~~~~~~~~~~~~~~~~Tscore\\
+%~\\
+%~~~~~~true~~~~~~~~~~~~~~~~~~~~true\\
+%pred~~~KIRC~KIRP~~~~~~~~pred~~~KIRC~KIRP\\
+%~~KIRC~~~~7~~~~4~~~~~~~~~~KIRC~~~~8~~~~3\\
+%~~KIRP~~~~4~~~10~~~~~~~~~~KIRP~~~~3~~~11
+%}
+%\end{quote}
+%\end{minipage}
+%\begin{minipage}[c]{0.3\linewidth}
+%\begin{quote}{\tiny \ttfamily \raggedright \noindent
+%~~~Variance~~~~~~~~~~~~~~~~~Tscore\\
+%~\\
+%~~~~~~true~~~~~~~~~~~~~~~~~~~~true\\
+%pred~~~KIRC~KIRP~~~~~~~~pred~~~KIRC~KIRP\\
+%~~KIRC~~~~7~~~~0~~~~~~~~~~KIRC~~~10~~~~0\\
+%~~KIRP~~~~4~~~14~~~~~~~~~~KIRP~~~~1~~~14
+%}
+%\end{quote}
+%\end{minipage}
+%\begin{minipage}[c]{0.3\linewidth}
+%\begin{quote}{\tiny \ttfamily \raggedright \noindent
+%~\\
+%~\\
+%~~~~~~true\\
+%pred~~~KIRC~KIRP\\
+%~~KIRC~~~~8~~~~0\\
+%~~KIRP~~~~3~~~14
+%}
+%\end{quote}
+%\end{minipage}
+
+
+
+
+
 
 \section{Discussion}
 
@@ -241,6 +322,8 @@ correctly predicting for $24$ out of $25$ subjects.
 In the future,  it may be interesting to compare different ways of normalizing the data. For instance,
 we chose upper quantile normalization for our analysis due to its frequent use and because it alter 
 count distributions as radically as full quantile normalization.
+
+
 \section*{Acknowledgments}
 
 We would like to thank Davide Risso for pointing us to the Cancer Genome Atlas
