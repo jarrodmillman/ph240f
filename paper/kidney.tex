@@ -21,16 +21,11 @@
 \begin{abstract}
 
 In this project, we compare classification methods for discriminating between
-two different cancer cells. Specifically, we look at Kidney renal
-papillary cell carcinoma (KIRP) and Kidney renal clear cell carcinoma (KIRC)
-from the Cancer Genome Atlas (TCGA).\footnote{\url{https://tcga-data.nci.nih.gov/tcga/}}
-
-TCGA provides high-quality, unnormalized RNA-Seq expected count data for both
-KIRP and KIRC (as well as many other cancer types).  We randomly split the data into
-training and validation sets. Before trying to classify
-the two cancer cells based on the expected count data, we performed extensive
-exploratory data analysis, looking at the need for normalization, low
-count filtering, batch effects, and outlier removal.
+two different cancer cells: kidney renal papillary cell carcinoma (KIRP) and
+kidney renal clear cell carcinoma (KIRC) from the Cancer Genome Atlas
+(TCGA).\footnote{\url{https://tcga-data.nci.nih.gov/tcga/}} TCGA provides
+high-quality, unnormalized RNA-Seq expected count data for both KIRP and KIRC
+(as well as many other cancer types).  
 
 After filtering and normalizing the data, we performed feature selection by two
 different techniques:  (1) high variability in expected counts across cancer
@@ -38,8 +33,7 @@ types and (2) largest test statistics computed via a two-sample t-test.  We then
 compared linear discriminant analysis (LDA) and support vector machine (SVM)
 classifiers using the two feature selection methods.  We also compared the
 performance of the Random Forest (RF) classifier using all the genes (i.e., no
-filtering of features prior to using RF.
-
+filtering of features prior to using RF).
 We found that selecting features using the largest test statistics computed via
 a two-sample t-test performed better than simply selecting the most variable
 genes for both LDA and SVM.  RF performed better than LDA, but SVM using
@@ -61,15 +55,22 @@ the test statistic based feature selection performed best.
 
 High throughput sequencing technology has revolutionized our ability to
 understand how cells function, or in the case of cancer, malfunction. In this
-study, we analyze RNA-Seq data from two types of renal cell carcinomas, clear and papillary. 
-In this context, identifying a patient's cancer cell type informs the prognosis for the patient
-and on how aggressively to treat the patient; clear cell carcinoma is considered the least likely to spread
-and more likely to respond favorably to treatment. Therefore, our aim is to classify a patient's cancer type 
-given their RNA-Seq expression data. To achieve this goal, we compare the accuracy of 
-several classification methods.
+study, we analyze RNA-Seq data from two types of renal cell carcinomas, clear
+and papillary.  In this context, identifying a patient's cancer cell type
+informs the prognosis for the patient and on how aggressively to treat the
+patient; clear cell carcinoma is considered the least likely to spread and more
+likely to respond favorably to treatment. Therefore, our aim is to classify a
+patient's cancer type given their RNA-Seq expression data. To achieve this
+goal, we compare the accuracy of several classification methods.
 
 
 \section{Methods}
+
+Before trying to classify the two cancer cells based on
+the expected count data, we performed extensive exploratory data analysis,
+looking at the need for normalization, low count filtering, batch effects, and
+outlier removal.
+
 \subsection{Classification Pipeline}
 
 Starting from gene expression levels using the RSEM algorithm, we carried out
@@ -80,11 +81,11 @@ the following steps to analyze our data:
 the rest are in the validation set.
 \item Filter out genes with low average read counts for both cancer types in the training set. Specifically, if the 
 mean expression count for a gene is less than 10 for both the KIRC and KIRP subjects, then the gene is filtered out of the training
-set. After filtering, the number of genes we consider drops from $18,205$ to $17,136$.
+set. After filtering, the number of genes we consider drops from $20,531$ to $17,136$.
 \item Perform upper quantile normalization on the expression counts in the training set. The upper quantile of the normalized counts is stored and used to apply the training set's normalization to the test set counts.
 \item Select features (i.e. genes) with which to train the classifiers in two ways:
 \begin{itemize}
-\item[-] Ranking the p-values from unequal sample size, unequal variance two-sided t-tests in the training set and selecting the genes with p-values below some threshold (i.e. picking the top 500 genes with the smallest p-values)
+\item[-] Ranking the p-values from unequal sample size, unequal variance two-sided t-tests in the training set and selecting the genes with p-values below some threshold (i.e. picking the top \fix{500} genes wth the smallest p-values)
 \item[-] Ranking the genes based on the variance of their expression counts across KIRC and KIRP subjects and selecting the
 top genes with the largest variance.
 \end{itemize}
@@ -98,16 +99,24 @@ subjects in the test set.
 \begin{figure}[H]
   \centering
     \includegraphics[width=.8\textwidth]{../../fig/rsem.png}
-\caption{RSEM }
+
+\caption{\textbf{The directed graphical model used by RSEM.} The model consists of N
+sets of random variables, one per sequenced RNA-Seq fragment. For each fragment,
+its parent transcript $G_n$, length $F_n$, start position  $S_n$, and orientation $O_n$
+are represented by latent variables. The observed variables are the read lengths
+$L_n^i$, quality scores $Q_n^i$, and sequences $R_n^i$ where $i = 1$ for SE data and
+$i \in \{1,2\}$ for DE data. The prior probabilities of a
+fragment being derived from each transcript is given by the parameter vector $\theta$.}
    \label{fig:rsem}
 \end{figure}
 
 \begin{figure}[H]
   \centering
     \includegraphics[width=\textwidth]{../../fig/filter_histograms.png}
-\caption{Histogram } The histogram on the left shows the log-counts looking reasonable normal, but with a large spike at 0.
-				On the right, we see the histogram of the log-counts after filtering and note that the spike at 0 is much smaller.
-				This histogram show
+\caption{\textbf{Histogram.} The histogram on the left shows the log-counts looking
+  reasonable normal, but with a large spike at 0.  On the right, we see the
+  histogram of the log-counts after filtering and note that the spike at 0 is
+  much smaller.}
    \label{fig:histogram}
 \end{figure}
 
@@ -115,7 +124,11 @@ subjects in the test set.
 \begin{figure}[H]
   \centering
     \includegraphics[width=\textwidth]{../../fig/postfilter_boxplot.png}
-\caption{Boxplot } This figure shows box plots of the distributions of log-counts for all 72 subjects in our dataset (after filtering). Red 	box plots correspond to subjects in the KIRC group, while blue box plots correspond to those in the KIRP group. No notable 	differences between KIRC and KIRP subjects are shown in these box plots. 
+\caption{\textbf{Boxplot.} This figure shows box plots of the distributions of
+  log-counts for all 72 subjects in our dataset (after filtering). Red 	box
+  plots correspond to subjects in the KIRC group, while blue box plots correspond
+  to those in the KIRP group. No notable differences between KIRC and KIRP
+  subjects are shown in these box plots.}
    \label{fig:boxplot}
 \end{figure}
 
@@ -123,8 +136,10 @@ subjects in the test set.
 \begin{figure}[H]
   \centering
     \includegraphics[width=.8\textwidth]{../../fig/postnorm_test_boxplot.png}
-\caption{Test Set Boxplots after normalization } After applying the training set normalization onto the test set, here is what the
-		distributions of the log-counts for the test subjects look like. Notice, all of the upper quantiles are aligned as expected 		with upper quantile normalization.
+\caption{\textbf{Test Set Boxplots after normalization.} After applying the training
+  set normalization onto the test set, here is what the distributions of the
+  log-counts for the test subjects look like. Notice, all of the upper quantiles
+  are aligned as expected with upper quantile normalization.}
    \label{fig:boxplotpost}
 \end{figure}
 
@@ -132,61 +147,65 @@ subjects in the test set.
 \begin{figure}[H]
   \centering
     \includegraphics[width=.8\textwidth]{../../fig/postnorm_histogram.png}
-\caption{Histogram after normalization  } This histogram shows the distribution of the log-counts in the training set, after applying upper quantile normalization. It looks very similar to the original histogram of the log-counts after filtering out low count genes.
+\caption{\textbf{Histogram after normalization.} This histogram shows the distribution
+  of the log-counts in the training set, after applying upper quantile
+  normalization. It looks very similar to the original histogram of the
+  log-counts after filtering out low count genes.}
    \label{fig:histogram}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-<<<<<<< HEAD
     \includegraphics[width=\textwidth]{../../fig/mdplots_postnorm.png}
-\caption{MD plots } Above are Mean Difference Plots after normalization, to compare the magnitude of the differences in expression
-				between subjects with the same type of cancer cell and between subjects with different types.
-				Note that, for same cell type subjects, the differences displayed in the plots look very similar to those 
-				seen in the plots for different cell type subjects. This is possibly due to some technical effects (such as Batch 				effect) that we were unable to investigate.
+\caption{\textbf{MD plots.} Above are Mean Difference Plots after normalization, to
+  compare the magnitude of the differences in expression between subjects with
+  the same type of cancer cell and between subjects with different types.  Note
+  that, for same cell type subjects, the differences displayed in the plots look
+  very similar to those seen in the plots for different cell type subjects. This
+  is possibly due to some technical effects (such as Batch
+  effect) that we were unable to investigate.}
    \label{fig:mdplot}
 \end{figure}
 
 \begin{figure}[H]
   \centering
     \includegraphics[width=.8\textwidth]{../../fig/pcplot.png}
-\caption{PCA Plot} Principal Component 1 is on the x-axis and Principal Component 2 is on the y-axis for both scatterplots.
-			    PCA is performed on the training set (with the 40 p-value selected genes) and applied to the test set. In both plots, we see a clear divide between 	KIRC and KIRP subjects along the first principal component. 
+
+\caption{\textbf{PCA Plot.} Principal Component 1 is on the x-axis and Principal
+  Component 2 is on the y-axis for both scatterplots.  PCA is performed on the
+  training set (with the 40 p-value selected genes) and applied to the test set.
+  In both plots, we see a clear divide between 	KIRC and KIRP subjects along
+  the first principal component.}
    \label{fig:pca}
 \end{figure}
-%=======
-   % \includegraphics[width=.8\textwidth]{../../fig/pcplot.png}
-%\caption{PCA }
-   %\label{fig:pca}
-%\end{figure}
-
->>>>>>> 1f18313ca384589140ecc091c13519aa55d0a63b
 
 
 \begin{figure}[H]
   \centering
     \includegraphics[width=.8\textwidth]{../../fig/testset_acc.png}
-\caption{Performance }This bar plot compares the percentages of correctly classified subjects, that our classification methods achieve. We see that Support Vector Machines (with the p-value subset of genes) performs the best with 96\% accuracy. Linear
-Discriminant Analysis (on the variance subset of genes) performs the worst at 68\%. 
+\caption{\textbf{Performance.}This bar plot compares the percentages of correctly
+  classified subjects, that our classification methods achieve. We see that
+  Support Vector Machines (with the p-value subset of genes) performs the best
+  with 96\% accuracy. Linear Discriminant Analysis (on the variance subset of
+  genes) performs the worst at 68\%.}
    \label{fig:performance}
 \end{figure}
-
 
 % Figure: histogram of gene expression after filtering. Looks reasonably normal. 
 % Figure: box-plots of the normalized data
 % Figure: mean difference plots after normalization
 % Figure: mean difference plots after feature selection
 
-Comments:
-
-The t-test that we employed to do feature selection, also known as Welch's
-t-test, used the following formula:
-
-\begin{gather}
-t = \frac{\overline{X}_1-\overline{X}_2}{s_{\overline{X}_1-\overline{X}_2}} \\
-s_{\overline{X}_1-\overline{X}_2} = \sqrt{\frac{s_1^2}{n_1}+\frac{s_2^2}{n_2}} \\
-\text{d.f.} = \frac{\left(\frac{s_1^2}{n_1}+\frac{s_2^2}{n_2} \right)}{\frac{s_1^4}{n_1^2(n_1-1)} + \frac{s_2^4}{n_2^2(n_2-1)}}
-\end{gather}
+%Comments:
+%
+%The t-test that we employed to do feature selection, also known as Welch's
+%t-test, used the following formula:
+%
+%\begin{gather}
+%t = \frac{\overline{X}_1-\overline{X}_2}{s_{\overline{X}_1-\overline{X}_2}} \\
+%s_{\overline{X}_1-\overline{X}_2} = \sqrt{\frac{s_1^2}{n_1}+\frac{s_2^2}{n_2}} \\
+%\text{d.f.} = \frac{\left(\frac{s_1^2}{n_1}+\frac{s_2^2}{n_2} \right)}{\frac{s_1^4}{n_1^2(n_1-1)} + \frac{s_2^4}{n_2^2(n_2-1)}}
+%\end{gather}
 
 \subsection{Classification Methods}
 
@@ -215,22 +234,22 @@ features (genes), and predicts class based on the majority vote from all of the 
 \end{itemize}
 \end{enumerate}
 
-\subsection{Performance Metrics}
-
-Give our classification methods, we will consider a number of performance
-metrics. We will look at accuracy (total correct over all predictions). Next,
-for classifiers that give probabilities, we will plot the number of correct
-predictions as a function of the number of false predictions for various
-thresholds. Eg. if $p>t=0.1$, we say that we cannot decide which cancer type
-that patient is. 
+%\subsection{Performance Metrics}
+%
+%Give our classification methods, we will consider a number of performance
+%metrics. We will look at accuracy (total correct over all predictions). Next,
+%for classifiers that give probabilities, we will plot the number of correct
+%predictions as a function of the number of false predictions for various
+%thresholds. Eg. if $p>t=0.1$, we say that we cannot decide which cancer type
+%that patient is. 
 
 \section{Data}
 
 The Cancer Genome Atlas (TCGA) collects and analyzes high-quality tumor samples
 and makes a variety of data available online. We have downloaded RNA-Seq data
-for two types of kidney cancer, KIRC and KIRP. The data was collected by the David
-Neil Hayes group at UNC Chapel Hill. The data was produced using Illumina HiSeq
-2000 sequencers. 
+for two types of kidney cancer, KIRC and KIRP. The data was collected by the
+David Neil Hayes group at UNC Chapel Hill. The data was produced using Illumina
+HiSeq 2000 sequencers. 
 
 Counts per genes (GAF TCGA hg19 June 2011 build) calculated using the SeqWare
 framework via the RSEM algorithm \cite{li2011rsem}.
@@ -239,20 +258,22 @@ While more data has been collected, we downloaded gene expression data from
 $N_C =35$ patients with KIRC and $N_P = 37$ patients with KIRP.  For each
 patient, we have gene expression data for $18,205$ genes. 
 
-The data portal on TCGA website shows that subjects are organized into batches. A batch consists of
-a group of subjects whose samples were processed together. Unfortunately,
-we were unable to collect this information with the expression counts. Therefore, we are 
-unable to examine possible batch effects that might obscure our feature selection. 
+The data portal on TCGA website shows that subjects are organized into batches.
+A batch consists of a group of subjects whose samples were processed together.
+Unfortunately, we were unable to collect this information with the expression
+counts. Therefore, we are unable to examine possible batch effects that might
+obscure our feature selection. 
 
 \section{Results}
 
-After normalization and low read-count gene filtering, we attempt to select the best
-genes to feed into the Support Vector Machines and Linear Discriminant Analysis classifiers.
-We first produced a list of the genes with the largest variances across KIRC and KIRP subjects.
-The top $N_best$ genes are presented in Table Y. Additionally, we produced a list of p-values
- for differential expression of genes in the two cancer types. Table X summarizes the genes with 
- the smallest p-values. Fig. Y shows a histogram of the p-values with lines showing typical 
- significance levels. 
+After normalization and low read-count gene filtering, we attempt to select the
+best genes to feed into the Support Vector Machines and Linear Discriminant
+Analysis classifiers.  We first produced a list of the genes with the largest
+variances across KIRC and KIRP subjects.  The top $N_{best}$ genes are
+presented in Table Y. Additionally, we produced a list of p-values for
+differential expression of genes in the two cancer types. Table X summarizes
+the genes with the smallest p-values. Fig. Y shows a histogram of the p-values
+with lines showing typical significance levels. 
  
 As in Fig. X, we plotted the scores corresponding to the first two principal
 components and colored the points according the cancer cell type. 
@@ -260,39 +281,46 @@ Evidently, the two cancer types separate nicely along the first
 principal component. (Not too surprisingly since we ran this analysis using
 only genes that were highly differentially expressed).  
 
-%\begin{minipage}[c]{0.3\linewidth}
-%\begin{quote}{\tiny  \ttfamily \raggedright \noindent
-%~~~Variance~~~~~~~~~~~~~~~~~Tscore\\
-%~\\
-%~~~~~~true~~~~~~~~~~~~~~~~~~~~true\\
-%pred~~~KIRC~KIRP~~~~~~~~pred~~~KIRC~KIRP\\
-%~~KIRC~~~~7~~~~4~~~~~~~~~~KIRC~~~~8~~~~3\\
-%~~KIRP~~~~4~~~10~~~~~~~~~~KIRP~~~~3~~~11
-%}
-%\end{quote}
-%\end{minipage}
-%\begin{minipage}[c]{0.3\linewidth}
-%\begin{quote}{\tiny \ttfamily \raggedright \noindent
-%~~~Variance~~~~~~~~~~~~~~~~~Tscore\\
-%~\\
-%~~~~~~true~~~~~~~~~~~~~~~~~~~~true\\
-%pred~~~KIRC~KIRP~~~~~~~~pred~~~KIRC~KIRP\\
-%~~KIRC~~~~7~~~~0~~~~~~~~~~KIRC~~~10~~~~0\\
-%~~KIRP~~~~4~~~14~~~~~~~~~~KIRP~~~~1~~~14
-%}
-%\end{quote}
-%\end{minipage}
-%\begin{minipage}[c]{0.3\linewidth}
-%\begin{quote}{\tiny \ttfamily \raggedright \noindent
-%~\\
-%~\\
-%~~~~~~true\\
-%pred~~~KIRC~KIRP\\
-%~~KIRC~~~~8~~~~0\\
-%~~KIRP~~~~3~~~14
-%}
-%\end{quote}
-%\end{minipage}
+Confusion matrix for LDA
+
+\vspace*{\fill}
+\begin{quote}{  \ttfamily \raggedright \noindent
+\centering
+~~~Variance~~~~~~~~~~~~~~~~~Tscore\\
+~\\
+~~~~~~true~~~~~~~~~~~~~~~~~~~~true\\
+pred~~~KIRC~KIRP~~~~~~~~pred~~~KIRC~KIRP\\
+~~KIRC~~~~7~~~~4~~~~~~~~~~KIRC~~~~8~~~~3\\
+~~KIRP~~~~4~~~10~~~~~~~~~~KIRP~~~~3~~~11\\
+}
+\end{quote}
+\vspace*{\fill}
+
+Confusion matrix for SVM
+\vspace*{\fill} 
+\begin{quote}{ \ttfamily \raggedright \noindent
+\centering
+~~~Variance~~~~~~~~~~~~~~~~~Tscore\\
+~\\
+~~~~~~true~~~~~~~~~~~~~~~~~~~~true\\
+pred~~~KIRC~KIRP~~~~~~~~pred~~~KIRC~KIRP\\
+~~KIRC~~~~7~~~~0~~~~~~~~~~KIRC~~~10~~~~0\\
+~~KIRP~~~~4~~~14~~~~~~~~~~KIRP~~~~1~~~14\\
+}
+\end{quote}
+\vspace*{\fill}
+
+Confusion matrix for RF
+\vspace*{\fill}
+\begin{quote}{ \ttfamily \raggedright \noindent
+\centering
+~~~~~~true\\
+pred~~~KIRC~KIRP\\
+~~KIRC~~~~8~~~~0\\
+~~KIRP~~~~3~~~14\\
+}
+\end{quote}
+\vspace*{\fill}
 
 
 
@@ -304,52 +332,57 @@ only genes that were highly differentially expressed).
 Our results are fundamentally limited due to the data. As this data was not
 designed for this type of experiment, necessary controls are not in place. For
 instance, the differences between gene expression may be due to technical
-effects. We do not have batch information for the subjects, so we cannot try 
-to correct for possible batch effect. Fig. Z shows Mean-Difference Plots of
-subjects within the same cancer cell type and of subjects with differing cell types.
-This is problematic because differences in expression between groups may be 
-due to technical effects as opposed to biological effects of interest. In our feature 
-selection, we might be unknowingly, choosing genes on which to build the classifiers
-that reflect the technical effects, and not those that reflect biological differences between
-subjects with KIRC and KIRP.
-From these plots, we see that the magnitude of technical effects within a cell type
-is similar to the magnitude of the biological effects between cell types which interest
-us. Also, the RNA-Seq experiments were 
-carried out a few months apart. It is not clear what efforts were made to 
-standardize the procedure of processing the cancer samples. In the future, 
-it would be important to have a negative control where two samples that are 
-supposed to be the same are processed at during the two times that the cancer 
-cells were processed. 
+effects. We do not have batch information for the subjects, so we cannot try to
+correct for possible batch effect. Fig. Z shows Mean-Difference Plots of
+subjects within the same cancer cell type and of subjects with differing cell
+types.  This is problematic because differences in expression between groups
+may be due to technical effects as opposed to biological effects of interest.
+In our feature selection, we might be unknowingly, choosing genes on which to
+build the classifiers that reflect the technical effects, and not those that
+reflect biological differences between subjects with KIRC and KIRP.
 
-Nonetheless, all of our classification methods appear to satisfactorily predict 
-cancer cell type in new patients, given their expression in some selected genes. The classifiers
-using the subset of genes determined by ranked p-values performed slightly better than the classifiers
-built with the subset of genes with the largest variances.
+From these plots, we see that the magnitude of technical effects within a cell
+type is similar to the magnitude of the biological effects between cell types
+which interest us. Also, the RNA-Seq experiments were carried out a few months
+apart. It is not clear what efforts were made to standardize the procedure of
+processing the cancer samples. In the future, it would be important to have a
+negative control where two samples that are supposed to be the same are
+processed at during the two times that the cancer cells were processed. 
 
-The proportion of correctly classified subjects for each of the methods using the smallest p-value subset of
-genes is as follows:
+Nonetheless, all of our classification methods appear to satisfactorily predict
+cancer cell type in new patients, given their expression in some selected
+genes. The classifiers using the subset of genes determined by ranked p-values
+performed slightly better than the classifiers built with the subset of genes
+with the largest variances.
+
+The proportion of correctly classified subjects for each of the methods using
+the smallest p-value subset of genes is as follows:
+
 \begin{enumerate}
 \item Support Vector Machine - $Accuracy = 96\%$
 \item Linear Discriminant Analysis - $Accuracy = 76\%$
 \end{enumerate}
 
-The proportion of correctly classified subjects for each of the methods using the largest variance subset of
-genes is as follows:
+The proportion of correctly classified subjects for each of the methods using
+the largest variance subset of genes is as follows:
+
 \begin{enumerate}
 \item Support Vector Machine - $Accuracy = 84\% $
 \item Linear Discriminant Analysis - $Accuracy =68\% $
 \end{enumerate}
 
-Random Forest is not built on a subset of the genes in our dataset, but rather all of the genes. It is allowed
-to determine the best subset of genes for classification of cell type. The proportion of correctly 
-classified validation subjects using Random Forest is $88\%$.
+Random Forest is not built on a subset of the genes in our dataset, but rather
+all of the genes. It is allowed to determine the best subset of genes for
+classification of cell type. The proportion of correctly classified validation
+subjects using Random Forest is $88\%$.
 
-The classifier that best predicts cancer cell types in the validation set is Support Vector Machine, 
-correctly predicting for $24$ out of $25$ subjects.
+The classifier that best predicts cancer cell types in the validation set is
+Support Vector Machine, correctly predicting for $24$ out of $25$ subjects.
 
-In the future,  it may be interesting to compare different ways of normalizing the data. For instance,
-we chose upper quantile normalization for our analysis due to its frequent use and because it alter 
-count distributions as radically as full quantile normalization.
+In the future,  it may be interesting to compare different ways of normalizing
+the data. For instance, we chose upper quantile normalization for our analysis
+due to its frequent use and because it alter count distributions as radically
+as full quantile normalization.
 
 
 \section*{Acknowledgments}
