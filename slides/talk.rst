@@ -145,3 +145,16 @@ Results: Random Forest confusion matrix
                KIRC    8    0
                KIRP    3   14 
 
+Summary
+=======
+
+* Good performance
+* Test statistic worked better than variance ranking
+* Future directions
+
+  * Technical and/or biological nuissance effects
+  * Error bars
+  * Biological significance
+  * Sensitivity study
+  * Non-cancer data
+  
