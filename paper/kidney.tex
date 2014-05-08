@@ -225,7 +225,7 @@ In Figure~\ref{fig:boxplotpost} on page~\pageref{fig:boxplotpost}, we've display
 the normalized log-transformed abundance estimates for the validation set where
 the normalization was based on the upper-quartile normalization of the training
 set.  In Figure~\ref{fig:histogrampost} on page~\pageref{fig:histogrampost},
-we display the post-normalization histogram for the training set. \fix{all or one?}
+we display the post-normalization histogram for the training set.
 
 \begin{figure}[H]
   \centering
@@ -260,23 +260,6 @@ we display the post-normalization histogram for the training set. \fix{all or on
    \label{fig:histogrampost}
 \end{figure}
 
-In Figure~\ref{fig:pca} on page~\pageref{fig:pca}, we plot the scores
-corresponding to the first two principal components and colored the points
-according the cancer cell type.  Evidently, the two cancer types separate
-nicely along the first principal component. (Not too surprisingly since we ran
-this analysis using only genes that were highly differentially expressed).  
-
-\begin{figure}[H]
-  \centering
-    \includegraphics[width=.8\textwidth]{../../fig/pcplot.png}
-\caption{\textbf{PCA Plot.} Principal Component 1 is on the x-axis and Principal
-  Component 2 is on the y-axis for both scatterplots.  PCA is performed on the
-  training set (with the 40 p-value selected genes) and applied to the test set.
-  In both plots, we see a clear divide between 	KIRC and KIRP subjects along
-  the first principal component.}
-   \label{fig:pca}
-\end{figure}
-
 After normalization and low abundance estimates filtering, we attempt to select the
 best genes to feed into the Support Vector Machines and Linear Discriminant
 Analysis classifiers.  We first produced a list of the genes with the largest
@@ -288,6 +271,22 @@ differential expression of genes in the two cancer types.
 %Table X summarizes
 %the genes with the smallest p-values. Fig. Y shows a histogram of the p-values
 %with lines showing typical significance levels. 
+
+In Figure~\ref{fig:pca} on page~\pageref{fig:pca}, we plot the scores
+corresponding to the first two principal components and colored the points
+according the cancer cell type.  Evidently, the two cancer types separate
+nicely along the first principal component. This is not too surprising since we ran the PCA analysis on the genes that show large differences in expression according to our t-test feature selection method.   The PCA analysis shows that the assumption that our data is linearly separable is reasonable. Thus it is reasonable to use LDA and SVM. 
+
+\begin{figure}[H]
+  \centering
+    \includegraphics[width=.8\textwidth]{../../fig/pcplot.png}
+\caption{\textbf{PCA Plot.} Principal Component 1 is on the x-axis and Principal
+  Component 2 is on the y-axis for both scatterplots.  PCA is performed on the
+  training set (with the 40 p-value selected genes) and applied to the test set.
+  In both plots, we see a clear divide between 	KIRC and KIRP subjects along
+  the first principal component.}
+   \label{fig:pca}
+\end{figure}
 
 For each distinct combination of feature selection procedure and the LDA and
 SVM classifiers, we built classification models on the training set.
@@ -390,7 +389,7 @@ Our results are fundamentally limited due to the data. As this data was not
 designed for this type of experiment, necessary controls are not in place. For
 instance, the differences between gene expression may be due to technical
 effects. We do not have batch information for the subjects, so we cannot try to
-correct for possible batch effect. Figure~\ref{fig:mdplot} on
+correct for possible batch effects. Figure~\ref{fig:mdplot} on
 page~\pageref{fig:mdplot} shows Mean-Difference Plots of subjects within the
 same cancer cell type and of subjects with differing cell types.  This is
 problematic because differences in expression between groups may be due to
@@ -427,12 +426,13 @@ genes. The classifiers using the subset of genes determined by ranked p-values
 performed slightly better than the classifiers built with the subset of genes
 with the largest variances.
 
-In the future,  it may be interesting to compare different ways of normalizing
-the data. For instance, we chose upper quantile normalization for our analysis
-due to its frequent use and because it does not alter the distributions as
-radically as full quantile normalization.
+In the future, we have a number of things that we can do to extend and improve our analysis. The first thing that would should do is get error bars on our accuracy estimates for each method that we used. The simplest way to go about this would be to do a $k$-fold cross validation scheme. Next, it would be important to collaborate with the biologists who generated this data to better understand the biological significance of the genes that we identified using our feature selection methods. Furthermore, there may be biological nuissance effects such as gender or age that impact our results. 
 
-\fix{error bars on performance}
+Additionally, it would be useful to incorporate healthy kidney cell RNA-Seq data into our data set. We could, for instance, run a classifier that has three classifications where the third classification is not having cancer. Relatedly, it would be helpful if, in our current scheme, we had confidence estimates in our classifications. For instance, in an actual biological application, it would be important to have a scheme for saying that we aren't confident enough to give a classification. 
+
+Finally, we could do more to assess the robustness of our methods to changing various parameters in our analysis. For instance, we chose $40$ genes, but we can vary that number and see how the accuracy of our classifiers change. Also we chose upper quantile normalization for our analysis, but other normalization schemes could be assessed as well. 
+
+
 
 \section*{Acknowledgments}
 
