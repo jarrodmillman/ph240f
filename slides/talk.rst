@@ -152,7 +152,7 @@ Summary
 * Test statistic worked better than variance ranking
 * Future directions
 
-  * Technical and/or biological nuissance effects
+  * Technical and/or biological nuisance effects
   * Error bars
   * Biological significance
   * Sensitivity study
