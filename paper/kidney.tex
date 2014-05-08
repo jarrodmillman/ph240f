@@ -63,38 +63,125 @@ likely to respond favorably to treatment. Therefore, our aim is to classify a
 patient's cancer type given their RNA-Seq expression data. To achieve this
 goal, we compare the accuracy of several classification methods.
 
+\section{Data}
+
+The Cancer Genome Atlas (TCGA) collects and analyzes high-quality tumor samples
+and makes a variety of data available online. We have downloaded RNA-Seq data
+for two types of kidney cancer, KIRC and KIRP. The data was collected by the
+David Neil Hayes group at UNC Chapel Hill. The data was produced using Illumina
+HiSeq 2000 sequencers. 
+
+While RNA-Seq data is typically count data, the data provided by the TCGA are
+abundance estimates.  The abundance estimates per gene are inferred using the
+RNA-Seq by Expectation-Maximization (RSEM) algorithm \cite{li2011rsem}.
+RSEM is based on a directed graphical model with latent variables (see
+Figure~\ref{fig:rsem} on page~\pageref{fig:rsem}). In the RSEM model,
+the observed variables are read length, quality score, and sequence; while
+the latent variables correspond to parent transcript, length, start position,
+and orientation.
+
+\begin{figure}[H]
+  \centering
+    \includegraphics[width=.8\textwidth]{../../fig/rsem.png}
+\caption{\textbf{The directed graphical model used by RSEM.} The model consists of N
+sets of random variables, one per sequenced RNA-Seq fragment. For each fragment,
+its parent transcript $G_n$, length $F_n$, start position  $S_n$, and orientation $O_n$
+are represented by latent variables. The observed variables are the read lengths
+$L_n^i$, quality scores $Q_n^i$, and sequences $R_n^i$ where $i = 1$ for SE data and
+$i \in \{1,2\}$ for DE data. The prior probabilities of a
+fragment being derived from each transcript is given by the parameter vector $\theta$.}
+   \label{fig:rsem}
+\end{figure}
+
+For the purposes of this project, we downloaded gene abundance estimates from
+$N_C =35$ patients with KIRC and $N_P = 37$ patients with KIRP.  For each
+patient, we have gene expression data for $20,531$ genes. 
+
+Note that the data portal on TCGA website shows that subjects are organized
+into batches.  A batch consists of a group of subjects whose samples were
+processed together.  Unfortunately, we were unable to collect this information
+with the expression counts. To compensate, we ensured that we had more samples
+per cancer type than were in a single batch.  However, we are unable to
+carefully examine possible batch effects that might obscure our feature
+selection.  We discuss this important caveat further in the discussion
+section.
 
 \section{Methods}
 
 All analyses were performed in the statistical software R \cite{rmanual}. The
 data was first encapsulated into an \texttt{SeqExpressionSet} \cite{biobase}
 with the cancer type stored as \texttt{pData}.
+Approximately $\sfrac{2}{3}$ ($n_T = 47$) of the samples were used as a
+training set, while the remaining $\sfrac{1}{3}$ ($n_V = 25$) served as the
+validation set. An indicator of training set inclusion was assigned randomly
+with probability $\sfrac{2}{3}$ within within each of the cancer cell types
+and stored as \texttt{pData}.
 
-Before trying to classify the two cancer cells based on
-the expected count data, we performed extensive exploratory data analysis,
-looking at the need for normalization, low count filtering, batch effects, and
-outlier removal.
+\subsection*{Exploratory data analysis}
 
-\subsection{Classification Pipeline}
+Before trying to classify the two cancer cells based on the gene abundance
+estimates, we performed extensive exploratory data analysis, looking at the
+need for normalization, low abundance estimates filtering, batch effects, and
+outlier removal.  Due to the distribution of gene expression abundance
+estimates having a high positive skew, all features were log-tranformed prior
+to subsequent analysis.
 
-Starting from gene expression levels using the RSEM algorithm, we carried out
-the following steps to analyze our data:
+After log-transforming the features, we next filtered out genes with low
+average abundance estimates for both cancer types in the training set.
+Specifically, if the mean abundance estimate for a gene was less than 10 for
+both the KIRC and KIRP subjects, then the gene was filtered out of both the
+training and validation set. After filtering, the number of genes we considered
+dropped from $20,531$ to $17,136$.
 
-\begin{enumerate}
-\item Split the data into training and validation sets. Two-thirds of our 72 subjects are allocated into the training set,
-the rest are in the validation set.
-\item Filter out genes with low average read counts for both cancer types in the training set. Specifically, if the 
-mean expression count for a gene is less than 10 for both the KIRC and KIRP subjects, then the gene is filtered out of the training
-set. After filtering, the number of genes we consider drops from $20,531$ to $17,136$.
-\item Perform upper quantile normalization on the expression counts in the training set. The upper quantile of the normalized counts is stored and used to apply the training set's normalization to the test set counts.
-\item Select features (i.e. genes) with which to train the classifiers in two ways:
+We then performed upper quantile normalization on the abundance estimates in
+the training set. The upper quantile of the normalized abundance estimates was
+stored and used to apply the training set's normalization to the validation set
+abundance estimates.
+
+\subsection*{Feature selection}
+
+Prior to classification, we further reduced the number of features in two
+different ways.  This was done because some of the classification methods
+we investigated require fewer features compared to the number of samples
+than we have in either our training or validation sets.  However, as discussed
+belowd, we only used these reduced number of features for the classification
+methods for which it was required.  The two feature selection methods we
+chose were based on the following two rankings:
+
 \begin{itemize}
-\item[-] Ranking the p-values from unequal sample size, unequal variance two-sided t-tests in the training set and selecting the genes with p-values below some threshold (i.e. picking the top \fix{500} genes wth the smallest p-values)
-\item[-] Ranking the genes based on the variance of their expression counts across KIRC and KIRP subjects and selecting the
-top genes with the largest variance.
+
+\item Ranking the scores from unequal sample size, unequal variance
+two-sided t-tests and
+
+\item Ranking the genes based on the variance of their abundance estimates across
+KIRC and KIRP subjects
+
 \end{itemize}
 
-\item Train several classifiers on the training data, with the selected
+Then we selected the \fix{$XXX$} top ranked features.
+
+
+
+
+
+
+
+%Comments:
+%
+%The t-test that we employed to do feature selection, also known as Welch's
+%t-test, used the following formula:
+%
+%\begin{gather}
+%t = \frac{\overline{X}_1-\overline{X}_2}{s_{\overline{X}_1-\overline{X}_2}} \\
+%s_{\overline{X}_1-\overline{X}_2} = \sqrt{\frac{s_1^2}{n_1}+\frac{s_2^2}{n_2}} \\
+%\text{d.f.} = \frac{\left(\frac{s_1^2}{n_1}+\frac{s_2^2}{n_2} \right)}{\frac{s_1^4}{n_1^2(n_1-1)} + \frac{s_2^4}{n_2^2(n_2-1)}}
+%\end{gather}
+
+
+
+\subsection*{Classification methods}
+
+Train several classifiers on the training data, with the selected
 features. Classifiers include Linear Discriminant Analysis (using R package
 \texttt{MASS} \cite{rclassmass}), Support Machine Vectors (using R package
 \texttt{e1071} \cite{e1071}), and Random Forest (using R package
@@ -103,20 +190,85 @@ Forest, we include all of the genes instead of the just the selected features
 and allow it to make the decision on which genes best classify the two cancer
 cell types.
 
-\item Filter and normalize the test data using the values from the second and third steps. 
-\item Use the classifiers to predict cancer cell type for the subjects in the validation set.
-\item Compare the accuracies of the predictions made by the classifiers by examining the proportion of correctly classified
-subjects in the test set.
+We investigated applied a number of methods in order to classify our data:
+
+\begin{enumerate}
+\item Principal Components Analysis - Choose the genes with the top X p-values. 
+\item Support Vector Machines
+\begin{itemize}
+\item[-] SVM represents the training data as points in a space and maps them in a way
+that the space between KIRC subjects and KIRP subjects is as wide as possible
+\item[-] The validation data is then mapped into the same space. Predictions of cancer
+cell type for these points are made based on which side of the dividing space that they fall. 
+\end{itemize}
+\item Linear Discriminant Analysis (with two clusters)
+\begin{itemize}
+\item[-] LDA finds the linear combination of genes, in our situation, which best separates our
+training data into its two classes (KIRP and KIRC)
+\item[-] This method is related to Principal Component Analysis; but differs in that LDA tries to
+actually model the differences between categorical responses.
+\end{itemize}
+\item Random Forests
+\begin{itemize}
+\item[-] Random Forest builds numerous classification trees, each one constructed on a random subset of
+features (genes), and predicts class based on the majority vote from all of the trees.
+\end{itemize}
 \end{enumerate}
 
+\subsection*{Performance metrics}
+
+We used the validation set to evaluate the performance of each of the methods,
+using the selected features to predict class. Performance was assessed via
+estimates of risk (error rate) within the validation set. Therefore, the
+``best'' performer in a category was the one that achieved the lowest error
+rate in the validation set after fitting the model on only the learning set.
+
+Filter and normalize the test data using the values from the second and third
+steps. 
+
+Use the classifiers to predict cancer cell type for the subjects in the
+validation set.
+
+Compare the accuracies of the predictions made by the classifiers by examining
+the proportion of correctly classified subjects in the test set.
+
+
+\section{Results}
+
+After normalization and low abundance estimates filtering, we attempt to select the
+best genes to feed into the Support Vector Machines and Linear Discriminant
+Analysis classifiers.  We first produced a list of the genes with the largest
+variances across KIRC and KIRP subjects.  The top $N_{best}$ genes are
+presented in Table Y. Additionally, we produced a list of p-values for
+differential expression of genes in the two cancer types. Table X summarizes
+the genes with the smallest p-values. Fig. Y shows a histogram of the p-values
+with lines showing typical significance levels. 
+
+\begin{figure}[H]
+  \centering
+    \includegraphics[width=.8\textwidth]{../../fig/testset_acc.png}
+\caption{\textbf{Performance.}This bar plot compares the percentages of correctly
+  classified subjects, that our classification methods achieve. We see that
+  Support Vector Machines (with the p-value subset of genes) performs the best
+  with 96\% accuracy. Linear Discriminant Analysis (on the variance subset of
+  genes) performs the worst at 68\%.}
+   \label{fig:performance}
+\end{figure}
+
+ 
+As in Fig. X, we plotted the scores corresponding to the first two principal
+components and colored the points according the cancer cell type. 
+Evidently, the two cancer types separate nicely along the first
+principal component. (Not too surprisingly since we ran this analysis using
+only genes that were highly differentially expressed).  
 
 \begin{figure}[H]
   \centering
     \includegraphics[width=\textwidth]{../../fig/filter_histograms.png}
-\caption{\textbf{Histogram.} The histogram on the left shows the log-counts looking
-  reasonable normal, but with a large spike at 0.  On the right, we see the
-  histogram of the log-counts after filtering and note that the spike at 0 is
-  much smaller.}
+\caption{\textbf{Histogram.} The histogram on the left shows the log of the abundance estimates looking
+  approximately normal, but with a large spike at 0.  On the right, we see the
+  histogram of the log of the abundance estimates after filtering and note that the spike at 0 is
+  reduced.}
    \label{fig:histogram}
 \end{figure}
 
@@ -125,7 +277,7 @@ subjects in the test set.
   \centering
     \includegraphics[width=\textwidth]{../../fig/postfilter_boxplot.png}
 \caption{\textbf{Boxplot.} This figure shows box plots of the distributions of
-  log-counts for all 72 subjects in our dataset (after filtering). Red 	box
+  log of the abundance estimates for all 72 subjects in our dataset (after filtering). Red 	box
   plots correspond to subjects in the KIRC group, while blue box plots correspond
   to those in the KIRP group. No notable differences between KIRC and KIRP
   subjects are shown in these box plots.}
@@ -138,7 +290,7 @@ subjects in the test set.
     \includegraphics[width=.8\textwidth]{../../fig/postnorm_test_boxplot.png}
 \caption{\textbf{Test Set Boxplots after normalization.} After applying the training
   set normalization onto the test set, here is what the distributions of the
-  log-counts for the test subjects look like. Notice, all of the upper quantiles
+  log of the abundance estimates for the test subjects look like. Notice, all of the upper quantiles
   are aligned as expected with upper quantile normalization.}
    \label{fig:boxplotpost}
 \end{figure}
@@ -148,9 +300,9 @@ subjects in the test set.
   \centering
     \includegraphics[width=.8\textwidth]{../../fig/postnorm_histogram.png}
 \caption{\textbf{Histogram after normalization.} This histogram shows the distribution
-  of the log-counts in the training set, after applying upper quantile
+  of the log of the abundance estimates in the training set, after applying upper quantile
   normalization. It looks very similar to the original histogram of the
-  log-counts after filtering out low count genes.}
+  log of the abundance estimates after filtering out low abundance genes.}
    \label{fig:histogram}
 \end{figure}
 
@@ -178,120 +330,6 @@ subjects in the test set.
   the first principal component.}
    \label{fig:pca}
 \end{figure}
-
-
-
-%Comments:
-%
-%The t-test that we employed to do feature selection, also known as Welch's
-%t-test, used the following formula:
-%
-%\begin{gather}
-%t = \frac{\overline{X}_1-\overline{X}_2}{s_{\overline{X}_1-\overline{X}_2}} \\
-%s_{\overline{X}_1-\overline{X}_2} = \sqrt{\frac{s_1^2}{n_1}+\frac{s_2^2}{n_2}} \\
-%\text{d.f.} = \frac{\left(\frac{s_1^2}{n_1}+\frac{s_2^2}{n_2} \right)}{\frac{s_1^4}{n_1^2(n_1-1)} + \frac{s_2^4}{n_2^2(n_2-1)}}
-%\end{gather}
-
-
-
-\subsection{Classification Methods}
-
-We investigated applied a number of methods in order to classify our data:
-
-\begin{enumerate}
-\item Principal Components Analysis - Choose the genes with the top X p-values. 
-\item Support Vector Machines
-\begin{itemize}
-\item[-] SVM represents the training data as points in a space and maps them in a way
-that the space between KIRC subjects and KIRP subjects is as wide as possible
-\item[-] The validation data is then mapped into the same space. Predictions of cancer
-cell type for these points are made based on which side of the dividing space that they fall. 
-\end{itemize}
-\item Linear Discriminant Analysis (with two clusters)
-\begin{itemize}
-\item[-] LDA finds the linear combination of genes, in our situation, which best separates our
-training data into its two classes (KIRP and KIRC)
-\item[-] This method is related to Principal Component Analysis; but differs in that LDA tries to
-actually model the differences between categorical responses.
-\end{itemize}
-\item Random Forests
-\begin{itemize}
-\item[-] Random Forest builds numerous classification trees, each one constructed on a random subset of
-features (genes), and predicts class based on the majority vote from all of the trees.
-\end{itemize}
-\end{enumerate}
-
-%\subsection{Performance Metrics}
-%
-%Give our classification methods, we will consider a number of performance
-%metrics. We will look at accuracy (total correct over all predictions). Next,
-%for classifiers that give probabilities, we will plot the number of correct
-%predictions as a function of the number of false predictions for various
-%thresholds. Eg. if $p>t=0.1$, we say that we cannot decide which cancer type
-%that patient is. 
-
-\section{Data}
-
-The Cancer Genome Atlas (TCGA) collects and analyzes high-quality tumor samples
-and makes a variety of data available online. We have downloaded RNA-Seq data
-for two types of kidney cancer, KIRC and KIRP. The data was collected by the
-David Neil Hayes group at UNC Chapel Hill. The data was produced using Illumina
-HiSeq 2000 sequencers. 
-
-Counts per genes (GAF TCGA hg19 June 2011 build) calculated using the SeqWare
-framework via the RSEM algorithm \cite{li2011rsem}.
-
-\begin{figure}[H]
-  \centering
-    \includegraphics[width=.8\textwidth]{../../fig/rsem.png}
-\caption{\textbf{The directed graphical model used by RSEM.} The model consists of N
-sets of random variables, one per sequenced RNA-Seq fragment. For each fragment,
-its parent transcript $G_n$, length $F_n$, start position  $S_n$, and orientation $O_n$
-are represented by latent variables. The observed variables are the read lengths
-$L_n^i$, quality scores $Q_n^i$, and sequences $R_n^i$ where $i = 1$ for SE data and
-$i \in \{1,2\}$ for DE data. The prior probabilities of a
-fragment being derived from each transcript is given by the parameter vector $\theta$.}
-   \label{fig:rsem}
-\end{figure}
-
-While more data has been collected, we downloaded gene expression data from
-$N_C =35$ patients with KIRC and $N_P = 37$ patients with KIRP.  For each
-patient, we have gene expression data for $18,205$ genes. 
-
-The data portal on TCGA website shows that subjects are organized into batches.
-A batch consists of a group of subjects whose samples were processed together.
-Unfortunately, we were unable to collect this information with the expression
-counts. Therefore, we are unable to examine possible batch effects that might
-obscure our feature selection. 
-
-\section{Results}
-
-After normalization and low read-count gene filtering, we attempt to select the
-best genes to feed into the Support Vector Machines and Linear Discriminant
-Analysis classifiers.  We first produced a list of the genes with the largest
-variances across KIRC and KIRP subjects.  The top $N_{best}$ genes are
-presented in Table Y. Additionally, we produced a list of p-values for
-differential expression of genes in the two cancer types. Table X summarizes
-the genes with the smallest p-values. Fig. Y shows a histogram of the p-values
-with lines showing typical significance levels. 
-
-\begin{figure}[H]
-  \centering
-    \includegraphics[width=.8\textwidth]{../../fig/testset_acc.png}
-\caption{\textbf{Performance.}This bar plot compares the percentages of correctly
-  classified subjects, that our classification methods achieve. We see that
-  Support Vector Machines (with the p-value subset of genes) performs the best
-  with 96\% accuracy. Linear Discriminant Analysis (on the variance subset of
-  genes) performs the worst at 68\%.}
-   \label{fig:performance}
-\end{figure}
-
- 
-As in Fig. X, we plotted the scores corresponding to the first two principal
-components and colored the points according the cancer cell type. 
-Evidently, the two cancer types separate nicely along the first
-principal component. (Not too surprisingly since we ran this analysis using
-only genes that were highly differentially expressed).  
 
 Confusion matrix for LDA
 
@@ -393,7 +431,7 @@ Support Vector Machine, correctly predicting for $24$ out of $25$ subjects.
 
 In the future,  it may be interesting to compare different ways of normalizing
 the data. For instance, we chose upper quantile normalization for our analysis
-due to its frequent use and because it alter count distributions as radically
+due to its frequent use and because it does not alter the distributions as radically
 as full quantile normalization.
 
 
