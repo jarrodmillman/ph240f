@@ -66,6 +66,10 @@ goal, we compare the accuracy of several classification methods.
 
 \section{Methods}
 
+All analyses were performed in the statistical software R \cite{rmanual}. The
+data was first encapsulated into an \texttt{SeqExpressionSet} \cite{biobase}
+with the cancer type stored as \texttt{pData}.
+
 Before trying to classify the two cancer cells based on
 the expected count data, we performed extensive exploratory data analysis,
 looking at the need for normalization, low count filtering, batch effects, and
@@ -89,26 +93,22 @@ set. After filtering, the number of genes we consider drops from $20,531$ to $17
 \item[-] Ranking the genes based on the variance of their expression counts across KIRC and KIRP subjects and selecting the
 top genes with the largest variance.
 \end{itemize}
-\item Train several classifiers on the training data, with the selected features. Classifiers include Linear Discriminant Analysis, Support Machine Vectors, and Random Forest. Note that when training Random Forest, we include all of the genes instead of the just the selected features and allow it to make the decision on which genes best classify the two cancer cell types.
+
+\item Train several classifiers on the training data, with the selected
+features. Classifiers include Linear Discriminant Analysis (using R package
+\texttt{MASS} \cite{rclassmass}), Support Machine Vectors (using R package
+\texttt{e1071} \cite{e1071}), and Random Forest (using R package
+\texttt{randomForest} \cite{randforest}).  Note that when training Random
+Forest, we include all of the genes instead of the just the selected features
+and allow it to make the decision on which genes best classify the two cancer
+cell types.
+
 \item Filter and normalize the test data using the values from the second and third steps. 
 \item Use the classifiers to predict cancer cell type for the subjects in the validation set.
 \item Compare the accuracies of the predictions made by the classifiers by examining the proportion of correctly classified
 subjects in the test set.
 \end{enumerate}
 
-\begin{figure}[H]
-  \centering
-    \includegraphics[width=.8\textwidth]{../../fig/rsem.png}
-
-\caption{\textbf{The directed graphical model used by RSEM.} The model consists of N
-sets of random variables, one per sequenced RNA-Seq fragment. For each fragment,
-its parent transcript $G_n$, length $F_n$, start position  $S_n$, and orientation $O_n$
-are represented by latent variables. The observed variables are the read lengths
-$L_n^i$, quality scores $Q_n^i$, and sequences $R_n^i$ where $i = 1$ for SE data and
-$i \in \{1,2\}$ for DE data. The prior probabilities of a
-fragment being derived from each transcript is given by the parameter vector $\theta$.}
-   \label{fig:rsem}
-\end{figure}
 
 \begin{figure}[H]
   \centering
@@ -180,21 +180,6 @@ fragment being derived from each transcript is given by the parameter vector $\t
 \end{figure}
 
 
-\begin{figure}[H]
-  \centering
-    \includegraphics[width=.8\textwidth]{../../fig/testset_acc.png}
-\caption{\textbf{Performance.}This bar plot compares the percentages of correctly
-  classified subjects, that our classification methods achieve. We see that
-  Support Vector Machines (with the p-value subset of genes) performs the best
-  with 96\% accuracy. Linear Discriminant Analysis (on the variance subset of
-  genes) performs the worst at 68\%.}
-   \label{fig:performance}
-\end{figure}
-
-% Figure: histogram of gene expression after filtering. Looks reasonably normal. 
-% Figure: box-plots of the normalized data
-% Figure: mean difference plots after normalization
-% Figure: mean difference plots after feature selection
 
 %Comments:
 %
@@ -206,6 +191,8 @@ fragment being derived from each transcript is given by the parameter vector $\t
 %s_{\overline{X}_1-\overline{X}_2} = \sqrt{\frac{s_1^2}{n_1}+\frac{s_2^2}{n_2}} \\
 %\text{d.f.} = \frac{\left(\frac{s_1^2}{n_1}+\frac{s_2^2}{n_2} \right)}{\frac{s_1^4}{n_1^2(n_1-1)} + \frac{s_2^4}{n_2^2(n_2-1)}}
 %\end{gather}
+
+
 
 \subsection{Classification Methods}
 
@@ -254,6 +241,19 @@ HiSeq 2000 sequencers.
 Counts per genes (GAF TCGA hg19 June 2011 build) calculated using the SeqWare
 framework via the RSEM algorithm \cite{li2011rsem}.
 
+\begin{figure}[H]
+  \centering
+    \includegraphics[width=.8\textwidth]{../../fig/rsem.png}
+\caption{\textbf{The directed graphical model used by RSEM.} The model consists of N
+sets of random variables, one per sequenced RNA-Seq fragment. For each fragment,
+its parent transcript $G_n$, length $F_n$, start position  $S_n$, and orientation $O_n$
+are represented by latent variables. The observed variables are the read lengths
+$L_n^i$, quality scores $Q_n^i$, and sequences $R_n^i$ where $i = 1$ for SE data and
+$i \in \{1,2\}$ for DE data. The prior probabilities of a
+fragment being derived from each transcript is given by the parameter vector $\theta$.}
+   \label{fig:rsem}
+\end{figure}
+
 While more data has been collected, we downloaded gene expression data from
 $N_C =35$ patients with KIRC and $N_P = 37$ patients with KIRP.  For each
 patient, we have gene expression data for $18,205$ genes. 
@@ -274,6 +274,18 @@ presented in Table Y. Additionally, we produced a list of p-values for
 differential expression of genes in the two cancer types. Table X summarizes
 the genes with the smallest p-values. Fig. Y shows a histogram of the p-values
 with lines showing typical significance levels. 
+
+\begin{figure}[H]
+  \centering
+    \includegraphics[width=.8\textwidth]{../../fig/testset_acc.png}
+\caption{\textbf{Performance.}This bar plot compares the percentages of correctly
+  classified subjects, that our classification methods achieve. We see that
+  Support Vector Machines (with the p-value subset of genes) performs the best
+  with 96\% accuracy. Linear Discriminant Analysis (on the variance subset of
+  genes) performs the worst at 68\%.}
+   \label{fig:performance}
+\end{figure}
+
  
 As in Fig. X, we plotted the scores corresponding to the first two principal
 components and colored the points according the cancer cell type. 
