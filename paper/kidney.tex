@@ -401,19 +401,18 @@ All code, figures, and text for this project are available on Github.\footnote{\
 
 
 \section{Discussion}
-
-Our results are fundamentally limited due to the data. As this data was not
+While our classification results were reasonably good, the generalizability of our results is fundamentally limited due to the data. As this data was not
 designed for this type of experiment, necessary controls are not in place. For
 instance, the differences between gene expression may be due to technical
-effects. We do not have batch information for the subjects, so we cannot try to
+effects or biological nuissance effects. We do not have batch information for the subjects, so we cannot try to
 correct for possible batch effects. Figure~\ref{fig:mdplot} on
 page~\pageref{fig:mdplot} shows Mean-Difference Plots of subjects within the
 same cancer cell type and of subjects with differing cell types.  This is
 problematic because differences in expression between groups may be due to
-technical effects as opposed to biological effects of interest.  In our feature
+technical effects as opposed to biological effects of interest.  Also there may be biological nuissance effects such as age or gender that we have not taken into acount. In our feature
 selection, we might be unknowingly, choosing genes on which to build the
 classifiers that reflect the technical effects, and not those that reflect
-biological differences between subjects with KIRC and KIRP.
+the biological differences of interest between subjects with KIRC and KIRP.
 
 \begin{figure}[H]
   \centering
@@ -443,7 +442,7 @@ genes. The classifiers using the subset of genes determined by ranked p-values
 performed slightly better than the classifiers built with the subset of genes
 with the largest variances.
 
-In the future, we have a number of things that we can do to extend and improve our analysis. The first thing that would should do is get error bars on our accuracy estimates for each method that we used. The simplest way to go about this would be to do a $k$-fold cross validation scheme. Next, it would be important to collaborate with the biologists who generated this data to better understand the biological significance of the genes that we identified using our feature selection methods. Furthermore, there may be biological nuissance effects such as gender or age that impact our results. 
+In the future, we have a number of things that we can do to extend and improve our analysis. The first thing that would should do is get error bars on our accuracy estimates for each method that we used. The simplest way to go about this would be to do a $k$-fold cross validation scheme. Next, it would be important to collaborate with the biologists who generated this data to better understand the biological significance of the genes that we identified using our feature selection methods. 
 
 Additionally, it would be useful to incorporate healthy kidney cell RNA-Seq data into our data set. We could, for instance, run a classifier that has three classifications where the third classification is not having cancer. Relatedly, it would be helpful if, in our current scheme, we had confidence estimates in our classifications. For instance, in an actual biological application, it would be important to have a scheme for saying that we aren't confident enough to give a classification. 
 
