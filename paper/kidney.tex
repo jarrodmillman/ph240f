@@ -84,8 +84,8 @@ start position, and orientation.
 \begin{figure}[H]
   \centering
     \includegraphics[width=.8\textwidth]{../../fig/rsem.png}
-\caption{\textbf{The directed graphical model used by RSEM.} The model consists of N
-sets of random variables, one per sequenced RNA-Seq fragment. For each fragment,
+\caption{\textbf{The directed graphical model used by RSEM.} 
+For each RNA-Seg fragment,
 its parent transcript $G_n$, length $F_n$, start position  $S_n$, and orientation $O_n$
 are represented by latent variables. The observed variables are the read lengths
 $L_n^i$, quality scores $Q_n^i$, and sequences $R_n^i$ where $i = 1$ for SE data and
@@ -147,21 +147,21 @@ we investigated require fewer features compared to the number of samples
 than we have in either our training or validation sets.  However, as discussed
 below, we only used these reduced number of features for the classification
 methods for which it was required.  The two feature selection methods we
-chose were based on the following two rankings:
+chose were based on the following two rankings for each gene:
 
 \begin{itemize}
 
-\item Ranking the scores from unequal sample size, unequal variance
-two-sided t-tests and
+\item the magnitude of the score from a two-sided t-tests and
 
-\item Ranking the genes based on the variance of their abundance estimates across
-KIRC and KIRP subjects
+\item the variance of their abundance estimates across
+KIRC and KIRP subjects.
 
 \end{itemize}
 
-Then we selected the \fix{$XXX$} top ranked features.  To get a sense of how likely
-the classifiers might be able to distinguish the two cancer types, we examined how
-well they clustered according to projecting them on their principal components.
+Then we selected the $40$ top ranked features.  To get a sense of how
+likely the classifiers might be able to distinguish the two cancer types, we
+examined how well they clustered when projecting them on their first and second
+principal components.
 
 \subsection*{Classification methods}
 
@@ -199,32 +199,12 @@ rate in the validation set after fitting the model on only the learning set.
 
 \section{Results}
 
-After normalization and low abundance estimates filtering, we attempt to select the
-best genes to feed into the Support Vector Machines and Linear Discriminant
-Analysis classifiers.  We first produced a list of the genes with the largest
-variances across KIRC and KIRP subjects.  The top $N_{best}$ genes are
-presented in Table Y. Additionally, we produced a list of p-values for
-differential expression of genes in the two cancer types. Table X summarizes
-the genes with the smallest p-values. Fig. Y shows a histogram of the p-values
-with lines showing typical significance levels. 
-
-\begin{figure}[H]
-  \centering
-    \includegraphics[width=.8\textwidth]{../../fig/testset_acc.png}
-\caption{\textbf{Performance.}This bar plot compares the percentages of correctly
-  classified subjects, that our classification methods achieve. We see that
-  Support Vector Machines (with the p-value subset of genes) performs the best
-  with 96\% accuracy. Linear Discriminant Analysis (on the variance subset of
-  genes) performs the worst at 68\%.}
-   \label{fig:performance}
-\end{figure}
-
- 
-As in Fig. X, we plotted the scores corresponding to the first two principal
-components and colored the points according the cancer cell type. 
-Evidently, the two cancer types separate nicely along the first
-principal component. (Not too surprisingly since we ran this analysis using
-only genes that were highly differentially expressed).  
+We first present our EDA results.  In Figure~\ref{fig:histogram} on
+page~\pageref{fig:histogram}, we plot histograms of the unfiltered
+and filtered log-transformed abundance estimates data for all the
+training set data.  The histograms help motivate our use of t-score
+ranking for feature selection as the distribution is approximately
+normal.
 
 \begin{figure}[H]
   \centering
@@ -236,6 +216,17 @@ only genes that were highly differentially expressed).
    \label{fig:histogram}
 \end{figure}
 
+We next investigated the need for normalization.  In Figure~\ref{fig:boxplot}
+on page~\pageref{fig:boxplot}, we have displayed boxplots of the filtered
+log-transformed abundance estimates for all the subjects in our dataset.  The
+boxplots reveal no visually obvious difference between KIRC and KIRP cells.
+But they do reveal variability that suggests the need for normalization.
+For the purposes of this project, we decided to use upper quartile normalization.
+In Figure~\ref{fig:boxplotpost} on page~\pageref{fig:boxplotpost}, we've displayed
+the normalized log-transformed abundance estimates for the validation set where
+the normalization was based on the upper-quartile normalization of the training
+set.  In Figure~\ref{fig:histogrampost} on page~\pageref{fig:histogrampost},
+we display the post-normalization histogram for the training set. \fix{all or one?}
 
 \begin{figure}[H]
   \centering
@@ -267,26 +258,18 @@ only genes that were highly differentially expressed).
   of the log of the abundance estimates in the training set, after applying upper quantile
   normalization. It looks very similar to the original histogram of the
   log of the abundance estimates after filtering out low abundance genes.}
-   \label{fig:histogram}
+   \label{fig:histogrampost}
 \end{figure}
 
-\begin{figure}[H]
-  \centering
-    \includegraphics[width=\textwidth]{../../fig/mdplots_postnorm.png}
-\caption{\textbf{MD plots.} Above are Mean Difference Plots after normalization, to
-  compare the magnitude of the differences in expression between subjects with
-  the same type of cancer cell and between subjects with different types.  Note
-  that, for same cell type subjects, the differences displayed in the plots look
-  very similar to those seen in the plots for different cell type subjects. This
-  is possibly due to some technical effects (such as Batch
-  effect) that we were unable to investigate.}
-   \label{fig:mdplot}
-\end{figure}
+In Figure~\ref{fig:pca} on page~\pageref{fig:pca}, we plot the scores
+corresponding to the first two principal components and colored the points
+according the cancer cell type.  Evidently, the two cancer types separate
+nicely along the first principal component. (Not too surprisingly since we ran
+this analysis using only genes that were highly differentially expressed).  
 
 \begin{figure}[H]
   \centering
     \includegraphics[width=.8\textwidth]{../../fig/pcplot.png}
-
 \caption{\textbf{PCA Plot.} Principal Component 1 is on the x-axis and Principal
   Component 2 is on the y-axis for both scatterplots.  PCA is performed on the
   training set (with the 40 p-value selected genes) and applied to the test set.
@@ -294,6 +277,21 @@ only genes that were highly differentially expressed).
   the first principal component.}
    \label{fig:pca}
 \end{figure}
+
+After normalization and low abundance estimates filtering, we attempt to select the
+best genes to feed into the Support Vector Machines and Linear Discriminant
+Analysis classifiers.  We first produced a list of the genes with the largest
+variances across KIRC and KIRP subjects.
+%The top $N_{best}$ genes are presented in Table Y.
+Additionally, we produced a list of p-values for
+differential expression of genes in the two cancer types.
+
+%Table X summarizes
+%the genes with the smallest p-values. Fig. Y shows a histogram of the p-values
+%with lines showing typical significance levels. 
+
+For each distinct combination of feature selection procedure and the LDA and SVM classifiers, we
+built classification models on the training set.
 
 Confusion matrix for LDA
 
@@ -336,6 +334,20 @@ pred~~~KIRC~KIRP\\
 \end{quote}
 \vspace*{\fill}
 
+In Figure~\ref{fig:performance} on page~\pageref{fig:performance}, we
+summarize the performance \fix{....}
+
+\begin{figure}[H]
+  \centering
+    \includegraphics[width=.8\textwidth]{../../fig/testset_acc.png}
+\caption{\textbf{Performance.}This bar plot compares the percentages of correctly
+  classified subjects, that our classification methods achieve. We see that
+  Support Vector Machines (with the p-value subset of genes) performs the best
+  with 96\% accuracy. Linear Discriminant Analysis (on the variance subset of
+  genes) performs the worst at 68\%.}
+   \label{fig:performance}
+\end{figure}
+
 The proportion of correctly classified subjects for each of the methods using
 the smallest p-value subset of genes is as follows:
 
@@ -374,6 +386,20 @@ technical effects as opposed to biological effects of interest.  In our feature
 selection, we might be unknowingly, choosing genes on which to build the
 classifiers that reflect the technical effects, and not those that reflect
 biological differences between subjects with KIRC and KIRP.
+
+\begin{figure}[H]
+  \centering
+    \includegraphics[width=\textwidth]{../../fig/mdplots_postnorm.png}
+\caption{\textbf{MD plots.} Above are Mean Difference Plots after normalization, to
+  compare the magnitude of the differences in expression between subjects with
+  the same type of cancer cell and between subjects with different types.  Note
+  that, for same cell type subjects, the differences displayed in the plots look
+  very similar to those seen in the plots for different cell type subjects. This
+  is possibly due to some technical effects (such as Batch
+  effect) that we were unable to investigate.}
+   \label{fig:mdplot}
+\end{figure}
+
 
 From these plots, we see that the magnitude of technical effects within a cell
 type is similar to the magnitude of the biological effects between cell types
