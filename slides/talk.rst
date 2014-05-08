@@ -34,6 +34,15 @@ Data: training and validation sets
   * 47 training / 25 test
   * 24 KIRC / 23 KIRP (training)
 
+Reproducibility
+===============
+
+All code, figures, and text for this project are available on Github:
+
+https://github.com/jarrodmillman/ph240f
+
+
+
 Method
 ======
 
