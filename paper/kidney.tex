@@ -279,7 +279,20 @@ Analysis classifiers.  We first produced a list of the genes with the largest
 variances across KIRC and KIRP subjects.
 %The top $N_{best}$ genes are presented in Table Y.
 Additionally, we produced a list of p-values for
-differential expression of genes in the two cancer types.
+differential expression of genes in the two cancer types.\footnote{There was
+no overlap in the two subsets of selected genes based on our two ranking
+algorithms.}
+As we discuss later, ranking by test statistic performed better then
+overall variance.  For a list of the genes selected by the test statistic
+see Figure~\ref{fig:ttest} on page~\pageref{fig:ttest}.
+
+\begin{figure}[H]
+  \centering
+    \includegraphics[height=.9\textheight]{../../fig/topgenes_p.pdf}
+\caption{\textbf{Ranking of genes by test statistics.}}
+   \label{fig:ttest}
+\end{figure}
+
 
 %Table X summarizes
 %the genes with the smallest p-values. Fig. Y shows a histogram of the p-values
@@ -288,7 +301,11 @@ differential expression of genes in the two cancer types.
 In Figure~\ref{fig:pca} on page~\pageref{fig:pca}, we plot the scores
 corresponding to the first two principal components and colored the points
 according the cancer cell type.  Evidently, the two cancer types separate
-nicely along the first principal component. This is not too surprising since we ran the PCA analysis on the genes that show large differences in expression according to our t-test feature selection method.   The PCA analysis shows that the assumption that our data is linearly separable is reasonable. Thus it is reasonable to use LDA and SVM. 
+nicely along the first principal component. This is not too surprising since we
+ran the PCA analysis on the genes that show large differences in expression
+according to our t-test feature selection method.   The PCA analysis shows that
+the assumption that our data is linearly separable is reasonable. Thus it is
+reasonable to use LDA and SVM. 
 
 \begin{figure}[H]
   \centering
@@ -397,22 +414,31 @@ method) in terms of its accuracy in prediction on the validation set.
 
 \subsection*{Reproducibility}
 
-All code, figures, and text for this project are available on Github.\footnote{\url{https://github.com/jarrodmillman/ph240f}}
-
+All code, figures, and text for this project are available on
+Github.\footnote{\url{https://github.com/jarrodmillman/ph240f}}
+To build this paper, you need to run \texttt{make} from inside
+the \texttt{paper} subdirectory.  All figures are inside the
+\texttt{fig} subdirectory.  The data is in the \texttt{data}
+subdirectory and the figures are in the \texttt{fig}
+subdirectory.
 
 \section{Discussion}
-While our classification results were reasonably good, the generalizability of our results is fundamentally limited due to the data. As this data was not
+
+While our classification results were reasonably good, the generalizability of
+our results is fundamentally limited due to the data. As this data was not
 designed for this type of experiment, necessary controls are not in place. For
 instance, the differences between gene expression may be due to technical
-effects or biological nuissance effects. We do not have batch information for the subjects, so we cannot try to
-correct for possible batch effects. Figure~\ref{fig:mdplot} on
-page~\pageref{fig:mdplot} shows Mean-Difference Plots of subjects within the
-same cancer cell type and of subjects with differing cell types.  This is
-problematic because differences in expression between groups may be due to
-technical effects as opposed to biological effects of interest.  Also there may be biological nuissance effects such as age or gender that we have not taken into acount. In our feature
-selection, we might be unknowingly, choosing genes on which to build the
-classifiers that reflect the technical effects, and not those that reflect
-the biological differences of interest between subjects with KIRC and KIRP.
+effects or biological nuissance effects. We do not have batch information for
+the subjects, so we cannot try to correct for possible batch effects.
+Figure~\ref{fig:mdplot} on page~\pageref{fig:mdplot} shows Mean-Difference
+Plots of subjects within the same cancer cell type and of subjects with
+differing cell types.  This is problematic because differences in expression
+between groups may be due to technical effects as opposed to biological effects
+of interest.  Also there may be biological nuissance effects such as age or
+gender that we have not taken into acount. In our feature selection, we might
+be unknowingly, choosing genes on which to build the classifiers that reflect
+the technical effects, and not those that reflect the biological differences of
+interest between subjects with KIRC and KIRP.
 
 \begin{figure}[H]
   \centering
@@ -442,11 +468,27 @@ genes. The classifiers using the subset of genes determined by ranked p-values
 performed slightly better than the classifiers built with the subset of genes
 with the largest variances.
 
-In the future, we have a number of things that we can do to extend and improve our analysis. The first thing that would should do is get error bars on our accuracy estimates for each method that we used. The simplest way to go about this would be to do a $k$-fold cross validation scheme. Next, it would be important to collaborate with the biologists who generated this data to better understand the biological significance of the genes that we identified using our feature selection methods. 
+In the future, we have a number of things that we can do to extend and improve
+our analysis. The first thing that would should do is get error bars on our
+accuracy estimates for each method that we used. The simplest way to go about
+this would be to do a $k$-fold cross validation scheme. Next, it would be
+important to collaborate with the biologists who generated this data to better
+understand the biological significance of the genes that we identified using
+our feature selection methods. 
 
-Additionally, it would be useful to incorporate healthy kidney cell RNA-Seq data into our data set. We could, for instance, run a classifier that has three classifications where the third classification is not having cancer. Relatedly, it would be helpful if, in our current scheme, we had confidence estimates in our classifications. For instance, in an actual biological application, it would be important to have a scheme for saying that we aren't confident enough to give a classification. 
+Additionally, it would be useful to incorporate healthy kidney cell RNA-Seq
+data into our data set. We could, for instance, run a classifier that has three
+classifications where the third classification is not having cancer. Relatedly,
+it would be helpful if, in our current scheme, we had confidence estimates in
+our classifications. For instance, in an actual biological application, it
+would be important to have a scheme for saying that we aren't confident enough
+to give a classification. 
 
-Finally, we could do more to assess the robustness of our methods to changing various parameters in our analysis. For instance, we chose $40$ genes, but we can vary that number and see how the accuracy of our classifiers change. Also we chose upper quantile normalization for our analysis, but other normalization schemes could be assessed as well. 
+Finally, we could do more to assess the robustness of our methods to changing
+various parameters in our analysis. For instance, we chose $40$ genes, but we
+can vary that number and see how the accuracy of our classifiers change. Also
+we chose upper quantile normalization for our analysis, but other normalization
+schemes could be assessed as well. 
 
 
 
