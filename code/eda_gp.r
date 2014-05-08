@@ -19,8 +19,8 @@ min(prop0)
 
 
 #Filter out some more low count genes 
-a=rowMeans(exprs(eset)[,eset$type=="KIRC" & eset$train])>=10
-b=rowMeans(exprs(eset)[,eset$type=="KIRP" & eset$train])>=10
+a=rowMeans(exprs(eset)[,eset$type=="KIRC" & eset$train])>=100
+b=rowMeans(exprs(eset)[,eset$type=="KIRP" & eset$train])>=100
 f=(a|b)
 table(f)
 new_eset=eset[f]
@@ -125,6 +125,8 @@ dev.off()
 filt.train=exprs(train.norm_eset)[pval.ind,]
 filt.test=test.norm_exprs[pval.ind,]
 rownames(filt.test)=rownames(filt.train)
+
+#### PCA for pvalue subset ####
 fit=prcomp(t(filt.train))
 
 par(mfrow=c(1,1))
@@ -138,7 +140,6 @@ fit.test=predict(fit,newdata=t(filt.test))
 #Plot of PC applied to test data
 plot(fit.test[,1],fit.test[,2],col=ifelse((test.eset$type=="KIRC"),"red","blue"),main="PC1 vs. PC2 (Test)",xlab="score1",ylab="score2")
 legend("topright",c("KIRC","KIRP"),text.col=c("red","blue"),cex=.8)
-
 
 #### Classifications ####
 #using p-value subset of genes
@@ -184,7 +185,7 @@ require("randomForest")
 #testx=t(lognorm_eset[,which(!eset$train)])
 
 #use function randomForest
-ngenes.rf=17136
+ngenes.rf=nrow(new_eset)
 top.pvals.rf=sort.pvals[1:ngenes.rf]
 
 pval.ind.rf=vector()
@@ -197,12 +198,12 @@ filt.test.rf=test.norm_exprs[pval.ind.rf,]
 trainx.rf=as.data.frame(t(filt.train.rf))
 testx.rf=as.data.frame(t(filt.test.rf))
 colnames(testx.rf)=colnames(trainx.rf)
-rf.fit=randomForest(x=trainx.rf,y=trainy,proximity=T,importance=T)
+rf.fit=randomForest(x=trainx.rf,y=trainy)
 rf.pred=predict(rf.fit,testx.rf)
 table(pred=rf.pred,true=testy)
 
 #Interestingly random forest does worse when I feed it more genes...
-accuracies=c(19/25,17/25,24/25,21/25,22/25)
+par(mfrow=c(1,1))
+accuracies=c(19/25,16/25,23/25,21/25,22/25)
 methods=c("LDAp","LDAv","SVMp","SVMv","RF")
-?barplot
 barplot(accuracies*100,names.arg=methods,ylim=c(0,100),ylab="Accuracy",xlab="Method",main="Test Set Accuracy")

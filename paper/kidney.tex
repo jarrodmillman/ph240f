@@ -129,10 +129,10 @@ to subsequent analysis.
 
 After log-transforming the features, we next filtered out genes with low
 average abundance estimates for both cancer types in the training set.
-Specifically, if the mean abundance estimate for a gene was less than \fix{10} for
+Specifically, if the mean abundance estimate for a gene was less than $100$ for
 both the KIRC and KIRP subjects, then the gene was filtered out of both the
 training and validation set. After filtering, the number of genes we considered
-dropped from $20,531$ to $17,136$.
+dropped from $20,531$ to $14,808$.
 
 We then performed upper quantile normalization on the abundance estimates in
 the training set. The upper quantile of the normalized abundance estimates was
