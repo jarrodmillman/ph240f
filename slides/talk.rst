@@ -32,12 +32,6 @@ EDA: Histogram
 .. image:: ../../fig/filter_histograms.png
    :align: center
 
-EDA: MD plots
-=============
-
-.. image:: ../../fig/mdplots_postnorm.png
-   :align: center
-
 EDA: Boxplots
 =============
 
@@ -54,6 +48,12 @@ EDA: Histogram
 ==============
 
 .. image:: ../../fig/postnorm_histogram.png
+   :align: center
+
+EDA: MD plots
+=============
+
+.. image:: ../../fig/mdplots_postnorm.png
    :align: center
 
 EDA: PCA
