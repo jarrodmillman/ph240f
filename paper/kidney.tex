@@ -72,13 +72,14 @@ David Neil Hayes group at UNC Chapel Hill. The data was produced using Illumina
 HiSeq 2000 sequencers. 
 
 While RNA-Seq data is typically count data, the data provided by the TCGA are
-abundance estimates.  The abundance estimates per gene are inferred using the
-RNA-Seq by Expectation-Maximization (RSEM) algorithm \cite{li2011rsem}.
-RSEM is based on a directed graphical model with latent variables (see
-Figure~\ref{fig:rsem} on page~\pageref{fig:rsem}). In the RSEM model,
-the observed variables are read length, quality score, and sequence; while
-the latent variables correspond to parent transcript, length, start position,
-and orientation.
+abundance estimates.  This makes the classification of this data similar to
+classification of microarray data \cite{dudoitclass}.  The abundance estimates
+per gene are inferred using the RNA-Seq by Expectation-Maximization (RSEM)
+algorithm \cite{li2011rsem}.  RSEM is based on a directed graphical model with
+latent variables (see Figure~\ref{fig:rsem} on page~\pageref{fig:rsem}). In the
+RSEM model, the observed variables are read length, quality score, and
+sequence; while the latent variables correspond to parent transcript, length,
+start position, and orientation.
 
 \begin{figure}[H]
   \centering
@@ -164,38 +165,29 @@ well they clustered according to projecting them on their principal components.
 
 \subsection*{Classification methods}
 
-Train several classifiers on the training data, with the selected
-features. Classifiers include Linear Discriminant Analysis (using R package
-\texttt{MASS} \cite{rclassmass}), Support Machine Vectors (using R package
-\texttt{e1071} \cite{e1071}), and Random Forest (using R package
-\texttt{randomForest} \cite{randforest}).  Note that when training Random
-Forest, we include all of the genes instead of the just the selected features
-and allow it to make the decision on which genes best classify the two cancer
-cell types.
+We trained several classifiers on the training data. Classifiers include Linear
+Discriminant Analysis (using R package \texttt{MASS} \cite{rclassmass}),
+Support Machine Vectors (using R package \texttt{e1071} \cite{e1071}), and
+Random Forest (using R package \texttt{randomForest} \cite{randforest}).  Note
+that when training Random Forest, we include all of the genes instead of the
+just the selected features and allow it to make the decision on which genes
+best classify the two cancer cell types.
 
-We investigated applied a number of methods in order to classify our data:
+Support Vector Machines SVM) represents the training data as points in a space
+and maps them in a way that the space between KIRC subjects and KIRP subjects
+is as wide as possible. The validation data is then mapped into the same space.
+Predictions of cancer cell type for these points are made based on which side
+of the dividing space that they fall. 
 
-\begin{enumerate}
-\item Support Vector Machines
-\begin{itemize}
-\item[-] SVM represents the training data as points in a space and maps them in a way
-that the space between KIRC subjects and KIRP subjects is as wide as possible
-\item[-] The validation data is then mapped into the same space. Predictions of cancer
-cell type for these points are made based on which side of the dividing space that they fall. 
-\end{itemize}
-\item Linear Discriminant Analysis (with two clusters)
-\begin{itemize}
-\item[-] LDA finds the linear combination of genes, in our situation, which best separates our
-training data into its two classes (KIRP and KIRC)
-\item[-] This method is related to Principal Component Analysis; but differs in that LDA tries to
-actually model the differences between categorical responses.
-\end{itemize}
-\item Random Forests
-\begin{itemize}
-\item[-] Random Forest builds numerous classification trees, each one constructed on a random subset of
-features (genes), and predicts class based on the majority vote from all of the trees.
-\end{itemize}
-\end{enumerate}
+Linear Discriminant Analysis (LDA) finds the linear combination of genes, in
+our situation, which best separates our training data into its two classes
+(KIRP and KIRC). This method is related to Principal Component Analysis; but
+differs in that LDA tries to actually model the differences between categorical
+responses.
+
+Random Forests (RF) build numerous classification trees, each one constructed
+on a random subset of features (genes), and predicts class based on the
+majority vote from all of the trees.
 
 \subsection*{Performance metrics}
 
@@ -204,16 +196,6 @@ using the selected features to predict class. Performance was assessed via
 estimates of risk (error rate) within the validation set. Therefore, the
 ``best'' performer in a category was the one that achieved the lowest error
 rate in the validation set after fitting the model on only the learning set.
-
-Filter and normalize the test data using the values from the second and third
-steps. 
-
-Use the classifiers to predict cancer cell type for the subjects in the
-validation set.
-
-Compare the accuracies of the predictions made by the classifiers by examining
-the proportion of correctly classified subjects in the test set.
-
 
 \section{Results}
 
@@ -354,39 +336,6 @@ pred~~~KIRC~KIRP\\
 \end{quote}
 \vspace*{\fill}
 
-
-
-
-
-
-\section{Discussion}
-
-Our results are fundamentally limited due to the data. As this data was not
-designed for this type of experiment, necessary controls are not in place. For
-instance, the differences between gene expression may be due to technical
-effects. We do not have batch information for the subjects, so we cannot try to
-correct for possible batch effect. Fig. Z shows Mean-Difference Plots of
-subjects within the same cancer cell type and of subjects with differing cell
-types.  This is problematic because differences in expression between groups
-may be due to technical effects as opposed to biological effects of interest.
-In our feature selection, we might be unknowingly, choosing genes on which to
-build the classifiers that reflect the technical effects, and not those that
-reflect biological differences between subjects with KIRC and KIRP.
-
-From these plots, we see that the magnitude of technical effects within a cell
-type is similar to the magnitude of the biological effects between cell types
-which interest us. Also, the RNA-Seq experiments were carried out a few months
-apart. It is not clear what efforts were made to standardize the procedure of
-processing the cancer samples. In the future, it would be important to have a
-negative control where two samples that are supposed to be the same are
-processed at during the two times that the cancer cells were processed. 
-
-Nonetheless, all of our classification methods appear to satisfactorily predict
-cancer cell type in new patients, given their expression in some selected
-genes. The classifiers using the subset of genes determined by ranked p-values
-performed slightly better than the classifiers built with the subset of genes
-with the largest variances.
-
 The proportion of correctly classified subjects for each of the methods using
 the smallest p-value subset of genes is as follows:
 
@@ -411,10 +360,39 @@ subjects using Random Forest is $88\%$.
 The classifier that best predicts cancer cell types in the validation set is
 Support Vector Machine, correctly predicting for $24$ out of $25$ subjects.
 
+\section{Discussion}
+
+Our results are fundamentally limited due to the data. As this data was not
+designed for this type of experiment, necessary controls are not in place. For
+instance, the differences between gene expression may be due to technical
+effects. We do not have batch information for the subjects, so we cannot try to
+correct for possible batch effect. Figure~\ref{fig:mdplot} on
+page~\pageref{fig:mdplot} shows Mean-Difference Plots of subjects within the
+same cancer cell type and of subjects with differing cell types.  This is
+problematic because differences in expression between groups may be due to
+technical effects as opposed to biological effects of interest.  In our feature
+selection, we might be unknowingly, choosing genes on which to build the
+classifiers that reflect the technical effects, and not those that reflect
+biological differences between subjects with KIRC and KIRP.
+
+From these plots, we see that the magnitude of technical effects within a cell
+type is similar to the magnitude of the biological effects between cell types
+which interest us. Also, the RNA-Seq experiments were carried out a few months
+apart. It is not clear what efforts were made to standardize the procedure of
+processing the cancer samples. In the future, it would be important to have a
+negative control where two samples that are supposed to be the same are
+processed at during the two times that the cancer cells were processed. 
+
+Nonetheless, all of our classification methods appear to satisfactorily predict
+cancer cell type in new patients, given their expression in some selected
+genes. The classifiers using the subset of genes determined by ranked p-values
+performed slightly better than the classifiers built with the subset of genes
+with the largest variances.
+
 In the future,  it may be interesting to compare different ways of normalizing
 the data. For instance, we chose upper quantile normalization for our analysis
-due to its frequent use and because it does not alter the distributions as radically
-as full quantile normalization.
+due to its frequent use and because it does not alter the distributions as
+radically as full quantile normalization.
 
 
 \section*{Acknowledgments}
