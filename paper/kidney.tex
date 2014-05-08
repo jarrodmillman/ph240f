@@ -123,7 +123,7 @@ Before trying to classify the two cancer cells based on the gene abundance
 estimates, we performed extensive exploratory data analysis, looking at the
 need for normalization, low abundance estimates filtering, batch effects, and
 outlier removal.  Due to the distribution of gene expression abundance
-estimates having a high positive skew, all features were log-tranformed prior
+estimates having a high positive skew, all features were log-transformed prior
 to subsequent analysis.
 
 After log-transforming the features, we next filtered out genes with low
@@ -144,7 +144,7 @@ Prior to classification, we further reduced the number of features in two
 different ways.  This was done because some of the classification methods
 we investigated require fewer features compared to the number of samples
 than we have in either our training or validation sets.  However, as discussed
-belowd, we only used these reduced number of features for the classification
+below, we only used these reduced number of features for the classification
 methods for which it was required.  The two feature selection methods we
 chose were based on the following two rankings:
 
@@ -158,26 +158,9 @@ KIRC and KIRP subjects
 
 \end{itemize}
 
-Then we selected the \fix{$XXX$} top ranked features.
-
-
-
-
-
-
-
-%Comments:
-%
-%The t-test that we employed to do feature selection, also known as Welch's
-%t-test, used the following formula:
-%
-%\begin{gather}
-%t = \frac{\overline{X}_1-\overline{X}_2}{s_{\overline{X}_1-\overline{X}_2}} \\
-%s_{\overline{X}_1-\overline{X}_2} = \sqrt{\frac{s_1^2}{n_1}+\frac{s_2^2}{n_2}} \\
-%\text{d.f.} = \frac{\left(\frac{s_1^2}{n_1}+\frac{s_2^2}{n_2} \right)}{\frac{s_1^4}{n_1^2(n_1-1)} + \frac{s_2^4}{n_2^2(n_2-1)}}
-%\end{gather}
-
-
+Then we selected the \fix{$XXX$} top ranked features.  To get a sense of how likely
+the classifiers might be able to distinguish the two cancer types, we examined how
+well they clustered according to projecting them on their principal components.
 
 \subsection*{Classification methods}
 
@@ -193,7 +176,6 @@ cell types.
 We investigated applied a number of methods in order to classify our data:
 
 \begin{enumerate}
-\item Principal Components Analysis - Choose the genes with the top X p-values. 
 \item Support Vector Machines
 \begin{itemize}
 \item[-] SVM represents the training data as points in a space and maps them in a way
