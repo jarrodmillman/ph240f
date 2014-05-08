@@ -7,8 +7,8 @@ a.in <- as.logical(rbinom(n=ncol(a.all), size=1, prob=.5))
 b.in <- as.logical(rbinom(n=ncol(b.all), size=1, prob=.5))
 a <- a.all[,a.in]
 b <- b.all[,b.in]
-c.all <- cbind(a,b)
-c <- c.all[rowSums(c.all)>100,]
+c <- cbind(a,b)
+#c <- c.all[rowSums(c.all)>100,]
 
 pData <- data.frame(
     type=factor(colnames(c)==colnames(a), levels=c(TRUE,FALSE), labels=c("KIRC","KIRP")),

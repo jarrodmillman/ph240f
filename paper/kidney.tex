@@ -289,40 +289,50 @@ differential expression of genes in the two cancer types.
 %the genes with the smallest p-values. Fig. Y shows a histogram of the p-values
 %with lines showing typical significance levels. 
 
-For each distinct combination of feature selection procedure and the LDA and SVM classifiers, we
-built classification models on the training set.
+For each distinct combination of feature selection procedure and the LDA and
+SVM classifiers, we built classification models on the training set.
 
-Confusion matrix for LDA
+Using the LDA classifier learned from the training set, we get the following
+confusion matrix when applied to the validation set:
 
-\vspace*{\fill}
+%\vspace*{\fill}
 \begin{quote}{  \ttfamily \raggedright \noindent
 \centering
 ~~~Variance~~~~~~~~~~~~~~~~~Tscore\\
 ~\\
 ~~~~~~true~~~~~~~~~~~~~~~~~~~~true\\
 pred~~~KIRC~KIRP~~~~~~~~pred~~~KIRC~KIRP\\
-~~KIRC~~~~7~~~~4~~~~~~~~~~KIRC~~~~8~~~~3\\
-~~KIRP~~~~4~~~10~~~~~~~~~~KIRP~~~~3~~~11\\
+~~KIRC~~~~7~~~~5~~~~~~~~~~KIRC~~~~8~~~~3\\
+~~KIRP~~~~4~~~~9~~~~~~~~~~KIRP~~~~3~~~11\\
 }
 \end{quote}
-\vspace*{\fill}
+%\vspace*{\fill}
 
-Confusion matrix for SVM
-\vspace*{\fill} 
+LDA performs better when feature selection is based on the test score ranking.
+
+Using the SVM classifier learned from the training set, we get the following
+confusion matrix when applied to the validation set:
+
+%\vspace*{\fill} 
 \begin{quote}{ \ttfamily \raggedright \noindent
 \centering
 ~~~Variance~~~~~~~~~~~~~~~~~Tscore\\
 ~\\
 ~~~~~~true~~~~~~~~~~~~~~~~~~~~true\\
 pred~~~KIRC~KIRP~~~~~~~~pred~~~KIRC~KIRP\\
-~~KIRC~~~~7~~~~0~~~~~~~~~~KIRC~~~10~~~~0\\
-~~KIRP~~~~4~~~14~~~~~~~~~~KIRP~~~~1~~~14\\
+~~KIRC~~~~7~~~~0~~~~~~~~~~KIRC~~~~9~~~~0\\
+~~KIRP~~~~4~~~14~~~~~~~~~~KIRP~~~~2~~~14\\
 }
 \end{quote}
-\vspace*{\fill}
+%\vspace*{\fill}
 
-Confusion matrix for RF
-\vspace*{\fill}
+SVM performs better than LDA and performs better when feature selection is
+based on the test score ranking, rather than variance ranking.
+
+Using the RF classifier learned from the training set, we get the following
+confusion matrix when applied to the validation set:
+
+%\vspace*{\fill}
 \begin{quote}{ \ttfamily \raggedright \noindent
 \centering
 ~~~~~~true\\
@@ -331,10 +341,9 @@ pred~~~KIRC~KIRP\\
 ~~KIRP~~~~3~~~14\\
 }
 \end{quote}
-\vspace*{\fill}
+%\vspace*{\fill}
 
-In Figure~\ref{fig:performance} on page~\pageref{fig:performance}, we
-summarize the performance \fix{....}
+RF performs better than LDA and almost identical to SVM.
 
 \begin{figure}[H]
   \centering
@@ -370,6 +379,10 @@ subjects using Random Forest is $88\%$.
 
 The classifier that best predicts cancer cell types in the validation set is
 Support Vector Machine, correctly predicting for $24$ out of $25$ subjects.
+In Figure~\ref{fig:performance} on page~\pageref{fig:performance}, we
+summarize the performance of each classifier (and feature selection
+method) in terms of its accuracy in prediction on the validation set.
+
 
 \section{Discussion}
 
@@ -419,6 +432,7 @@ the data. For instance, we chose upper quantile normalization for our analysis
 due to its frequent use and because it does not alter the distributions as
 radically as full quantile normalization.
 
+\fix{error bars on performance}
 
 \section*{Acknowledgments}
 
