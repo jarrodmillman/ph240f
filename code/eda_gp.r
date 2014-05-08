@@ -28,8 +28,8 @@ new_eset=eset[f]
 par(mfrow=c(1,2))
 hist(log(exprs(eset)+1),main="Pre-Filter Log Exprs.",xlab="Log Expression")
 hist(log(exprs(new_eset)+1),main="Filtered Log Exprs",xlab="Log Expression")
-
-boxplot(log(1+exprs(new_eset)),main="Boxplots of Log-Expression for KIRC & KIRP Subjects",xlab="Subjects")
+par(mfrow=c(1,1))
+boxplot(log(1+exprs(new_eset)),main="Boxplots of Log-Expression for KIRC & KIRP Subjects",xlab="Subjects",col=ifelse((new_eset$type=="KIRC"),"red","blue"))
 #look at Mean-Difference Plots from subjects within cell-types and between cell-types
 #might need to untransform eset from log since I think MDPlot takes the log for you
 par(mfrow=c(2,2))
@@ -63,7 +63,7 @@ for(i in 1:dim(test.eset)[2]){
   test.norm_exprs[,i]=upper*exprs(test.eset)[,i]/up.test[i] 
 }
 par(mfrow=c(1,1))
-boxplot(log(test.norm_exprs+1),main="Post Norm. Test Set Boxplot",xlab="Subjects")
+boxplot(log(test.norm_exprs+1),main="Post Norm. Test Set Boxplot",xlab="Subjects",col=ifelse((test.eset$type=="KIRC"),"red","blue"))
 rownames(test.norm_exprs)=rownames(train.norm_eset)
 #check normalization 
 par(mfrow=c(2,2))
@@ -131,11 +131,12 @@ par(mfrow=c(1,1))
 plot(fit)
 score1=fit$x[,1]
 score2=fit$x[,2]
-plot(score1,score2,col=ifelse((train.norm_eset$type=="KIRC"),"red","blue"),main="PC1 vs. PC2, Colored by Cancer (Train)")
+par(mfrow=c(1,2))
+plot(score1,score2,col=ifelse((train.norm_eset$type=="KIRC"),"red","blue"),main="PC1 vs. PC2 (Train)")
 legend("topright",c("KIRC","KIRP"),text.col=c("red","blue"),cex=.8)
 fit.test=predict(fit,newdata=t(filt.test))
 #Plot of PC applied to test data
-plot(fit.test[,1],fit.test[,2],col=ifelse((test.eset$type=="KIRC"),"red","blue"),main="PC1 vs. PC2, Colored by Cancer (Test)")
+plot(fit.test[,1],fit.test[,2],col=ifelse((test.eset$type=="KIRC"),"red","blue"),main="PC1 vs. PC2 (Test)",xlab="score1",ylab="score2")
 legend("topright",c("KIRC","KIRP"),text.col=c("red","blue"),cex=.8)
 
 

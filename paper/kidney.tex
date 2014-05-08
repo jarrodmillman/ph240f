@@ -105,56 +105,61 @@ subjects in the test set.
 \begin{figure}[H]
   \centering
     \includegraphics[width=\textwidth]{../../fig/filter_histograms.png}
-\caption{Histogram }
+\caption{Histogram } The histogram on the left shows the log-counts looking reasonable normal, but with a large spike at 0.
+				On the right, we see the histogram of the log-counts after filtering and note that the spike at 0 is much smaller.
+				This histogram show
+   \label{fig:histogram}
+\end{figure}
+
+
+\begin{figure}[H]
+  \centering
+    \includegraphics[width=\textwidth]{../../fig/postfilter_boxplot.png}
+\caption{Boxplot } This figure shows box plots of the distributions of log-counts for all 72 subjects in our dataset (after filtering). Red 	box plots correspond to subjects in the KIRC group, while blue box plots correspond to those in the KIRP group. No notable 	differences between KIRC and KIRP subjects are shown in these box plots. 
+   \label{fig:boxplot}
+\end{figure}
+
+
+\begin{figure}[H]
+  \centering
+    \includegraphics[width=.8\textwidth]{../../fig/postnorm_test_boxplot.png}
+\caption{Test Set Boxplots after normalization } After applying the training set normalization onto the test set, here is what the
+		distributions of the log-counts for the test subjects look like. Notice, all of the upper quantiles are aligned as expected 		with upper quantile normalization.
+   \label{fig:boxplotpost}
+\end{figure}
+
+
+\begin{figure}[H]
+  \centering
+    \includegraphics[width=.8\textwidth]{../../fig/postnorm_histogram.png}
+\caption{Histogram after normalization  } This histogram shows the distribution of the log-counts in the training set, after applying upper quantile normalization. It looks very similar to the original histogram of the log-counts after filtering out low count genes.
    \label{fig:histogram}
 \end{figure}
 
 \begin{figure}[H]
   \centering
     \includegraphics[width=\textwidth]{../../fig/mdplots_postnorm.png}
-\caption{MD plots }
+\caption{MD plots } Above are Mean Difference Plots after normalization, to compare the magnitude of the differences in expression
+				between subjects with the same type of cancer cell and between subjects with different types.
+				Note that, for same cell type subjects, the differences displayed in the plots look very similar to those 
+				seen in the plots for different cell type subjects. This is possibly due to some technical effects (such as Batch 				effect) that we were unable to investigate.
    \label{fig:mdplot}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-    \includegraphics[width=\textwidth]{../../fig/postfilter_boxplot.png}
-\caption{Boxplot }
-   \label{fig:boxplot}
+    \includegraphics[width=.8\textwidth]{../../fig/pcplot_final.png}
+\caption{PCA Plot} Principal Component 1 is on the x-axis and Principal Component 2 is on the y-axis for both scatterplots.
+			    PCA is performed on the training set (with the 40 p-value selected genes) and applied to the test set. In both plots, we see a clear divide between 	KIRC and KIRP subjects along the first principal component. 
+   \label{fig:pca}
 \end{figure}
 
-\begin{figure}[H]
-  \centering
-    \includegraphics[width=.8\textwidth]{../../fig/postnorm_test_boxplot.png}
-\caption{Boxplots after normalization }
-   \label{fig:boxplotpost}
-\end{figure}
-
-\begin{figure}[H]
-  \centering
-    \includegraphics[width=.8\textwidth]{../../fig/postnorm_histogram.png}
-\caption{Histogram after normalization  }
-   \label{fig:histogram}
-\end{figure}
-
-\begin{figure}[H]
-  \centering
-    \includegraphics[width=.8\textwidth]{../../fig/pcplot_train.png}
-\caption{PCA train data}
-   \label{fig:pcatrain}
-\end{figure}
-
-\begin{figure}[H]
-  \centering
-    \includegraphics[width=.8\textwidth]{../../fig/pcplot_test.png}
-\caption{PCA test data}
-   \label{fig:pcatest}
-\end{figure}
 
 \begin{figure}[H]
   \centering
     \includegraphics[width=.8\textwidth]{../../fig/testset_acc.png}
-\caption{Performance }
+\caption{Performance }This bar plot compares the percentages of correctly classified subjects, that our classification methods achieve. We see that Support Vector Machines (with the p-value subset of genes) performs the best with 96\% accuracy. Linear
+Discriminant Analysis (on the variance subset of genes) performs the worst at 68\%. 
    \label{fig:performance}
 \end{figure}
 
