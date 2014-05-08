@@ -16,7 +16,7 @@ Classification of
   * Kidney renal papillary cell carcinoma (KIRP)
   * Kidney renal clear cell carcinoma (KIRC)
 
-based on normalized TCGA RNAseq expected count data
+based on TCGA RNAseq abundance estimates
 
 
 Data: Expected read counts with RSEM
@@ -25,27 +25,56 @@ Data: Expected read counts with RSEM
 .. image:: ../../fig/rsem.png
    :align: center
 
+Data: training and validation sets
+==================================
 
-EDA: Histogram
+* 72 samples
+
+  * 35 KIRC / 37 KIRP
+  * 47 training / 25 test
+  * 24 KIRC / 23 KIRP (training)
+
+Method
+======
+
+EDA
+
+* Log-transformed
+* Filtering
+* Normalization
+
+Feature Selection
+
+* Variance
+* T-score
+
+Classification methods
+
+* LDA with features selected
+* SVM with features selected
+* Random forest
+
+
+EDA: Filtering
 ==============
 
 .. image:: ../../fig/filter_histograms.png
    :align: center
 
-EDA: Boxplots
-=============
+EDA: Normalization
+==================
 
 .. image:: ../../fig/postfilter_boxplot.png
    :align: center
 
-EDA: Boxplot
-============
+EDA: Normalization
+==================
 
 .. image:: ../../fig/postnorm_test_boxplot.png
    :align: center
 
-EDA: Histogram
-==============
+EDA: Normalization
+==================
 
 .. image:: ../../fig/postnorm_histogram.png
    :align: center
@@ -116,3 +145,16 @@ Results: Random Forest confusion matrix
                KIRC    8    0
                KIRP    3   14 
 
+Summary
+=======
+
+* Good performance
+* Test statistic worked better than variance ranking
+* Future directions
+
+  * Technical and/or biological nuisance effects
+  * Error bars
+  * Biological significance
+  * Sensitivity study
+  * Non-cancer data
+  
